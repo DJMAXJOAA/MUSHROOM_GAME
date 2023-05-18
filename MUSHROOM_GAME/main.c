@@ -22,42 +22,58 @@ void Render() //화면 출력
 	ScreenFlipping();
 }
 
+void WaitRender(clock_t OldTime)
+{
+	clock_t CurTime;	//clock_t 수행시간 측정
+	while (1)
+	{
+		CurTime = clock();
+		if (CurTime - OldTime > 33)
+			break;
+	}
+}
+
 void Release()	//해제
 {
 
 }
 
+int GetKeyEvent()
+{
+	if (_kbhit())	//_kbhit : 키보드가 눌렀음을 확인하는 함수
+		return _getch();	//읽은 문자 반환
+
+	return -1;
+}
+
+void KeyProcess(int key)
+{
+	switch (key)
+	{
+	case 'i':
+		break;
+	case 'j':
+		break;
+	}
+}
+
 int main()
 {
-	int nKey;
-	clock_t CurTime, OldTime;	//clock_t 수행시간 측정
-
 	ScreenInit();
-	Init();	// 초기화
+	Init();		// 초기화
 
-	/* ESC : 종료 */
+	/* q : 종료 */
 	while (1)
 	{
-		if (_kbhit()) //_kbhit : 키보드가 눌렀음을 확인하는 함수
-		{
-			nKey = _getch();	//읽은 문자 반환
-			if (nKey == 27) break;
-			switch (nKey)
-			{
-			case 'j': break;
-			case 'l': break;
-			}
-		}
+		int nKey = GetKeyEvent();
+		if (nKey == 'q')
+			break;
+		KeyProcess(nKey);
 
-		OldTime = clock();	//프로그램 시작 후 지난 틱 수 반환
 		Update();	//데이터 갱신
-		Render(); //화면 출력
-		while (1)
-		{
-			CurTime = clock();
-			if (CurTime - OldTime > 33) break;
-		}
 
+		Render();	//화면 출력
+		WaitRender(clock());
 	}
 	Release();
 	ScreenRelease();	//해제
