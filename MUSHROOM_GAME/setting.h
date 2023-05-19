@@ -8,16 +8,21 @@
 #include <conio.h>
 #include <string.h>
 
-#include "player.h"
 #include "Screen.h"
+#include "player.h"
 
+
+enum
+{
+	BLACK, D_BLACK, D_GREEN, D_SKYBLUE, D_RED, D_VIOLET, D_YELLOW, 
+	GRAY, D_GRAY, BLUE, GREEN, SKYBLUE, RED, VIOLET, YELLOW, WHITE
+};
 
 void Init();						// 초기화(초기 설정)
 void Update();						// 데이터 갱신
 void Render();						// 화면 출력
 void WaitRender(clock_t OldTime);	// 화면 지연시간
 void Release();						// 할당 해제
-int Timer(int SetTime, char string);
 int GetKeyEvent();					// 키 입력받기
 
 
@@ -39,6 +44,8 @@ void Init()
 	ui.position.y = 0;
 	ui.MyAtt = 10;
 	ui.MyHP = 100;
+	ui.EnemyAtt = 0;
+	ui.EnemyHP = 0;
 	ui.timer = 0;
 	ui.second = 0;
 
@@ -46,6 +53,7 @@ void Init()
 	enemy.position.y = 20;
 	enemy.att = 10;
 	enemy.hp = 30;
+	enemy.dead = FALSE;
 }
 
 void Update()
@@ -61,29 +69,35 @@ void Render()
 	char string[100] = { 0 };
 
 	for (int i = 0; i < 40; i++) ScreenPrint(ui.position.x, ui.position.y + i, "┃");
+	for (int i = 1; i < 38; i++) ScreenPrint(ui.position.x + i, 9, "━");
 
+	if (player.isReady == NOW_ATTACKING) SetColor(D_RED);
 	ScreenPrint(player.position.x, player.position.y, player.strPlayer1);
 	ScreenPrint(player.position.x, player.position.y+1, player.strPlayer2);
 	ScreenPrint(player.position.x, player.position.y+2, player.strPlayer3);
 
-	ScreenPrint(enemy.position.x, enemy.position.y, "♣");
+	SetColor(D_RED);
+	if (enemy.dead == FALSE) ScreenPrint(enemy.position.x, enemy.position.y, "♣");
+	SetColor(WHITE);
 
-	sprintf(string, "주인공 이동 좌표 : %d, %d", player.position.x, player.position.y);
+	sprintf(string, "이동 좌표 : %d, %d", player.position.x, player.position.y);
 	ScreenPrint(85, 1, string);
-
 	sprintf(string, "공격 가능상태 : %d", player.isReady);
 	ScreenPrint(85, 2, string);
 	
-	sprintf(string, "체력 : %d", ui.MyHP);
+	sprintf(string, "내 체력 : %d", ui.MyHP);
 	ScreenPrint(85, 4, string);
-
-	sprintf(string, "공격력 : %d", ui.MyAtt);
+	sprintf(string, "내 공격력 : %d", ui.MyAtt);
 	ScreenPrint(85, 5, string);
+	sprintf(string, "적 체력 : %d", ui.EnemyHP);
+	ScreenPrint(85, 6, string);
+	sprintf(string, "적 공격력 : %d", ui.EnemyAtt);
+	ScreenPrint(85, 7, string);
 
 	if (player.isReady == NOW_ATTACKING) 
 	{
 		sprintf(string, "남은 채집 시간 : %d초", ui.second);
-		ScreenPrint(85, 6, string);
+		ScreenPrint(85, 9, string);
 	}
 	
 
@@ -102,7 +116,7 @@ void WaitRender(clock_t OldTime)
 			if (player.isReady == NOW_ATTACKING)
 			{
 				ui.timer += 1;
-				if (ui.timer > 33)
+				if (ui.timer >= 33)
 				{
 					ui.second -= 1;
 					ui.timer = 0;
@@ -116,23 +130,6 @@ void WaitRender(clock_t OldTime)
 void Release()	//해제
 {
 
-}
-
-int Timer(int SetTime, char string)
-{
-	int EndTime = (unsigned)time(NULL);
-	EndTime += 3;
-
-	while (1)
-	{
-		int StartTime = (unsigned)time(NULL);
-		sprintf("남은 채집 시간 : %d초\n", EndTime - StartTime);
-		ScreenPrint(85, 6, string);
-		if (EndTime - StartTime == 0)
-		{
-			return 0;
-		}
-	}
 }
 
 int GetKeyEvent()

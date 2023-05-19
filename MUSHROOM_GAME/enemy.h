@@ -11,6 +11,14 @@ typedef struct Enemy
 	Position position;
 	int hp;
 	int att;
+	int dead;
 }Enemy;
 
 Enemy enemy;
+
+void EnemyDead();
+
+void EnemyDead()
+{
+
+}

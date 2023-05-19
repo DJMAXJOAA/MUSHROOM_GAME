@@ -16,7 +16,7 @@ int main()
 			break;
 
 		PlayerMove();
-		CanAttack();
+		PlayerAttack();
 			
 
 		Update();	//데이터 갱신

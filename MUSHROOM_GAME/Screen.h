@@ -8,7 +8,7 @@ void ScreenFlipping();
 void ScreenClear();
 void ScreenRelease(); // 게임 종료시 메모리 초기화
 void ScreenPrint(int x, int y, char* string);	// 문자열 출력
-void SetColor(unsigned short color);	// 색 설정
+extern void SetColor(unsigned short color);	// 색 설정
 
 // static -> Screen.c 안에서만 사용 가능한 전역 변수 선언
 static int g_nScreenIndex;
@@ -58,7 +58,7 @@ void ScreenPrint(int x, int y, char* string)
 	WriteFile(g_hScreen[g_nScreenIndex], string, strlen(string), &dw, NULL);
 }
 
-void SetColor(unsigned short color) // 15가지 색상
+extern void SetColor(unsigned short color) // 15가지 색상
 {
 	SetConsoleTextAttribute(g_hScreen[g_nScreenIndex], color);
 }
