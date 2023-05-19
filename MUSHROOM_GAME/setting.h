@@ -69,7 +69,7 @@ void Render()
 	char string[100] = { 0 };
 
 	for (int i = 0; i < 40; i++) ScreenPrint(ui.position.x, ui.position.y + i, "┃");
-	for (int i = 1; i < 38; i++) ScreenPrint(ui.position.x + i, 9, "━");
+	for (int i = 1; i < 38; i++) ScreenPrint(ui.position.x + i, 10, "━");
 
 	if (player.isReady == NOW_ATTACKING) SetColor(D_RED);
 	ScreenPrint(player.position.x, player.position.y, player.strPlayer1);
@@ -96,7 +96,7 @@ void Render()
 
 	if (player.isReady == NOW_ATTACKING) 
 	{
-		sprintf(string, "남은 채집 시간 : %d초", ui.second);
+		sprintf(string, "남은 채집 시간 : %.1lf초", ui.second);
 		ScreenPrint(85, 9, string);
 	}
 	
@@ -115,12 +115,7 @@ void WaitRender(clock_t OldTime)
 		{
 			if (player.isReady == NOW_ATTACKING)
 			{
-				ui.timer += 1;
-				if (ui.timer >= 33)
-				{
-					ui.second -= 1;
-					ui.timer = 0;
-				}
+				ui.second -= 0.03;
 			}
 			break;
 		}		

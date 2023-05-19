@@ -11,7 +11,7 @@ typedef struct UI
 	int EnemyHP;
 	int EnemyAtt;
 	int timer;
-	int second;
+	float second;
 }UI;
 
 UI ui;

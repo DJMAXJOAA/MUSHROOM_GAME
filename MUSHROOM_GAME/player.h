@@ -7,11 +7,11 @@
 #define CANT_ATTACK 0
 #define CAN_ATTACK 1
 #define NOW_ATTACKING 2
-#define ATTACK_COOLDOWN 1
+#define ATTACK_COOLDOWN 1.5
 
-char PLAYER_STR1[] = "■▲■";		
-char PLAYER_STR2[] = "◀□▶";
-char PLAYER_STR3[] = "■▼■";		// 플레이어의 생김새
+char PLAYER_STR1[] = "□△□";		
+char PLAYER_STR2[] = "◁▣▷";
+char PLAYER_STR3[] = "□▽□";		// 플레이어의 생김새
 
 typedef struct Player
 {
@@ -38,31 +38,31 @@ void PlayerMove()
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000 && player.position.x > 0) { //왼쪽
 			player.position.x--;
 			player.position.x--;
-			sprintf(player.strPlayer1, "■▲■");
-			sprintf(player.strPlayer2, "◁□▶");
-			sprintf(player.strPlayer3, "■▼■");
+			sprintf(player.strPlayer1, "□△□");
+			sprintf(player.strPlayer2, "◀▣▷");
+			sprintf(player.strPlayer3, "□▽□");
 		}
 
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && player.position.x < 75) { //오른쪽
 			player.position.x++;
 			player.position.x++;
-			sprintf(player.strPlayer1, "■▲■");
-			sprintf(player.strPlayer2, "◀□▷");
-			sprintf(player.strPlayer3, "■▼■");
+			sprintf(player.strPlayer1, "□△□");
+			sprintf(player.strPlayer2, "◁▣▶");
+			sprintf(player.strPlayer3, "□▽□");
 		}
 
 		if (GetAsyncKeyState(VK_UP) & 0x8000 && player.position.y > 0) { //위
 			player.position.y--;
-			sprintf(player.strPlayer1, "■△■");
-			sprintf(player.strPlayer2, "◀□▶");
-			sprintf(player.strPlayer3, "■▼■");
+			sprintf(player.strPlayer1, "□▲□");
+			sprintf(player.strPlayer2, "◁▣▷");
+			sprintf(player.strPlayer3, "□▽□");
 		}
 
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000 && player.position.y < 37) { //아래
 			player.position.y++;
-			sprintf(player.strPlayer1, "■▲■");
-			sprintf(player.strPlayer2, "◀□▶");
-			sprintf(player.strPlayer3, "■▽■");
+			sprintf(player.strPlayer1, "□△□");
+			sprintf(player.strPlayer2, "◁▣▷");
+			sprintf(player.strPlayer3, "□▼□");
 		}
 	}
 
