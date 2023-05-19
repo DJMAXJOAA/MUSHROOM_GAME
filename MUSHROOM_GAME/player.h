@@ -10,7 +10,7 @@
 #define ATTACK_COOLDOWN 1
 
 char PLAYER_STR1[] = "■▲■";		
-char PLAYER_STR2[] = "◀□▶";	
+char PLAYER_STR2[] = "◀□▶";
 char PLAYER_STR3[] = "■▼■";		// 플레이어의 생김새
 
 typedef struct Player
