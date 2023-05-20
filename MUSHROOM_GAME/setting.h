@@ -11,7 +11,6 @@
 #include "Screen.h"
 #include "player.h"
 
-
 enum
 {
 	BLACK, D_BLACK, D_GREEN, D_SKYBLUE, D_RED, D_VIOLET, D_YELLOW, 
@@ -25,11 +24,9 @@ void WaitRender(clock_t OldTime);	// 화면 지연시간
 void Release();						// 할당 해제
 int GetKeyEvent();					// 키 입력받기
 
-
-
 void Init()
 {
-	player.position.x = 0;
+	player.position.x = 10;
 	player.position.y = 22;
 	player.isReady = 0;
 	player.nLength = strlen(PLAYER_STR1);
@@ -42,6 +39,7 @@ void Init()
 
 	ui.position.x = 82;
 	ui.position.y = 0;
+	ui.Money = 0;
 	ui.MyAtt = 10;
 	ui.MyHP = 100;
 	ui.EnemyAtt = 0;
@@ -49,11 +47,26 @@ void Init()
 	ui.timer = 0;
 	ui.second = 0;
 
-	enemy.position.x = 60;
-	enemy.position.y = 20;
-	enemy.att = 10;
-	enemy.hp = 30;
+	enemy.position.x = 0;
+	enemy.position.y = 0;
+	enemy.att = 0;
+	enemy.hp = 0;
 	enemy.dead = FALSE;
+	enemy.money = 0;
+
+	enemy1.position.x = 60;
+	enemy1.position.y = 20;
+	enemy1.att = 10;
+	enemy1.hp = 30;
+	enemy1.dead = FALSE;
+	enemy1.money = 100;
+
+	enemy2.position.y = 30;
+	enemy2.att = 15;
+	enemy2.hp = 25;
+	enemy2.position.x = 60;
+	enemy2.dead = FALSE;
+	enemy2.money = 150;
 }
 
 void Update()
@@ -69,22 +82,34 @@ void Render()
 	char string[100] = { 0 };
 
 	for (int i = 0; i < 40; i++) ScreenPrint(ui.position.x, ui.position.y + i, "┃");
-	for (int i = 1; i < 38; i++) ScreenPrint(ui.position.x + i, 10, "━");
-
+	for (int i = 1; i < 38; i++) ScreenPrint(ui.position.x + i, 9, "━");
+	
 	if (player.isReady == NOW_ATTACKING) SetColor(D_RED);
 	ScreenPrint(player.position.x, player.position.y, player.strPlayer1);
 	ScreenPrint(player.position.x, player.position.y+1, player.strPlayer2);
 	ScreenPrint(player.position.x, player.position.y+2, player.strPlayer3);
 
 	SetColor(D_RED);
-	if (enemy.dead == FALSE) ScreenPrint(enemy.position.x, enemy.position.y, "♣");
+	if (enemy1.dead == FALSE) 
+	{
+		ScreenPrint(enemy1.position.x, enemy1.position.y, "♣");
+		if (player.collide.x == enemy1.position.x && player.collide.y == enemy1.position.y) EnemyTargetChange(&enemy1);
+	}
+		
+	if (enemy2.dead == FALSE)
+	{
+		ScreenPrint(enemy2.position.x, enemy2.position.y, "♣");
+		if (player.collide.x == enemy2.position.x && player.collide.y == enemy2.position.y) EnemyTargetChange(&enemy2);
+	}
 	SetColor(WHITE);
 
 	sprintf(string, "이동 좌표 : %d, %d", player.position.x, player.position.y);
 	ScreenPrint(85, 1, string);
 	sprintf(string, "공격 가능상태 : %d", player.isReady);
 	ScreenPrint(85, 2, string);
-	
+	sprintf(string, "돈 : %d", ui.Money);
+	ScreenPrint(85, 3, string);
+
 	sprintf(string, "내 체력 : %d", ui.MyHP);
 	ScreenPrint(85, 4, string);
 	sprintf(string, "내 공격력 : %d", ui.MyAtt);
@@ -97,7 +122,7 @@ void Render()
 	if (player.isReady == NOW_ATTACKING) 
 	{
 		sprintf(string, "남은 채집 시간 : %.1lf초", ui.second);
-		ScreenPrint(85, 9, string);
+		ScreenPrint(85, 11, string);
 	}
 	
 

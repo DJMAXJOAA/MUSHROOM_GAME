@@ -15,9 +15,9 @@ int main()
 		if (nKey == 'q')
 			break;
 
+		PlayerCollide();
 		PlayerMove();
 		PlayerAttack();
-			
 
 		Update();	//데이터 갱신
 

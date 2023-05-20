@@ -1,24 +1,18 @@
 #include <stdio.h>
 #include <Windows.h>
+#include "wall.h"
 
-typedef struct Position
-{
-	int x, y;	        //ÁÂÇ¥ ¼³Á¤
-}Position;
-
-typedef struct Enemy
+typedef struct
 {
 	Position position;
 	int hp;
 	int att;
 	int dead;
-}Enemy;
+	int money;
+}EnemyDefault;
 
-Enemy enemy;
+EnemyDefault enemy;
+EnemyDefault enemy1;
+EnemyDefault enemy2;
 
-void EnemyDead();
-
-void EnemyDead()
-{
-
-}
+EnemyDefault* enemy_target = &enemy;

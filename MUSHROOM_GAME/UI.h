@@ -6,6 +6,7 @@
 typedef struct UI
 {
 	Position position;
+	int Money;
 	int MyHP;
 	int MyAtt;
 	int EnemyHP;
@@ -15,3 +16,4 @@ typedef struct UI
 }UI;
 
 UI ui;
+UI* p_ui = &ui;
