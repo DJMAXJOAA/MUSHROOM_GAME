@@ -4,10 +4,10 @@
 typedef struct
 {
 	Position position;
-	int hp;
-	int att;
-	int dead;
-	int money;
+	double hp;
+	double att;
+	double dead;
+	double money;
 }EnemyDefault;
 
 EnemyDefault enemy;

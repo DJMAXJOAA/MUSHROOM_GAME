@@ -66,6 +66,7 @@ void Init()
 	ui.EnemyAtt = 0;
 	ui.EnemyHP = 0;
 	ui.second = 0;
+	InitUI();
 }
 
 void StageInit(int number)
@@ -98,6 +99,7 @@ void Update()
 	{
 		SetColor(WHITE);
 		Init();
+		StageInit(1);
 	}
 }
 
@@ -112,6 +114,7 @@ void Render()
 	for (int i = 1; i < HEIGHT; i++) { 
 		ScreenPrint(ui.position.x + i, 9, "━"); 
 		ScreenPrint(ui.position.x + i, 13, "━"); 
+		ScreenPrint(ui.position.x + i, 16, "━");
 	}
 
 	if (player.dead == FALSE)
@@ -120,7 +123,9 @@ void Render()
 		if (ObstacleCheck()) {
 			SetColor(D_RED);
 			ui.MyHP -= OBSTACLE_DAMAGE;
+			ui.Danger = TRUE;
 		}
+		else ui.Danger = FALSE;
 		ScreenPrint(player.position.x, player.position.y, player.strPlayer1);
 		ScreenPrint(player.position.x, player.position.y + 1, player.strPlayer2);
 		ScreenPrint(player.position.x, player.position.y + 2, player.strPlayer3);
@@ -183,42 +188,50 @@ void Render()
 
 	sprintf(string, "이동 좌표 : %d, %d", player.collide.x, player.collide.y);
 	ScreenPrint(83, 1, string);
-	sprintf(string, "공격 가능 여부 : %d", player.isReady);
+	sprintf(string, "보유 돈 : %d원", ui.Money);
 	ScreenPrint(83, 2, string);
-	sprintf(string, "돈 : %d", ui.Money);
-	ScreenPrint(83, 3, string);
 
-	sprintf(string, "내 체력 : %.1lf", ui.MyHP);
+	sprintf(string, "내 체력\t%.1lf", ui.MyHP);
 	ScreenPrint(83, 4, string);
-	sprintf(string, "내 공격력 : %.1lf", ui.MyAtt);
+	sprintf(string, "내 공격력\t%.1lf", ui.MyAtt);
 	ScreenPrint(83, 5, string);
-	sprintf(string, "적 체력 : %.1lf", ui.EnemyHP);
+	sprintf(string, "적 체력\t%.1lf", ui.EnemyHP);
 	ScreenPrint(83, 6, string);
-	sprintf(string, "적 공격력 : %.1lf", ui.EnemyAtt);
+	sprintf(string, "적 공격력\t%.1lf", ui.EnemyAtt);
 	ScreenPrint(83, 7, string);
 
-	//if (player.isReady == NOW_ATTACKING)
-	//{
-	//	sprintf(string, "공격 쿨타임 : %.2lf초", ui.second);
-	//	ScreenPrint(85, 15, string);
-	//	sprintf(string, "미사일 좌표 : %.1lf", missile->x);
-	//	ScreenPrint(85, 16, string);
-	//	sprintf(string, "미사일 : %d", missile->extinct);
-	//	ScreenPrint(85, 17, string);
-
-	//	sprintf(string, "미사일1 : %d", missile1.interval);
-	//	ScreenPrint(85, 19, string);
-	//	sprintf(string, "미사일2 : %d", missile2.interval);
-	//	ScreenPrint(85, 20, string);
-	//	sprintf(string, "미사일3 : %d", missile3.interval);
-	//	ScreenPrint(85, 21, string);
-	//}
-
-	if (ui.critical >= 1)
+	if (ui.Danger == TRUE)
 	{
-		sprintf(string, "%d번째 크리티컬!! 1.5x Damage", ui.critical);
+		ScreenPrint(83, 14, "장애물에 닿고 있어요. 조심하세요!");
+	}
+	else if (ui.Notice == TRUE)
+	{
+		sprintf(string, "적을 잡고 %d원을 얻었습니다!", ui.temp_money);
+		ScreenPrint(83, 14, string);
+	}
+	else if (ui.Critical >= 1)
+	{
+		sprintf(string, "연속 %d번째 크리티컬!!", ui.Critical);
+		ScreenPrint(83, 14, string);
+		sprintf(string, "%.lf데미지를 주었습니다!", ui.MyAtt * 1.5);
 		ScreenPrint(83, 15, string);
 	}
+	else if (ui.HitEnemy == TRUE)
+	{
+		sprintf(string, "공격 성공! %.lf데미지를 주었습니다!", ui.MyAtt);
+		ScreenPrint(83, 14, string);
+	}
+	else if (ui.Damaged == TRUE)
+	{
+		sprintf(string, "아이고! %.lf데미지를 받았습니다 ㅜㅜ", enemy_target->att);
+		ScreenPrint(83, 14, string);
+	}
+	else
+	{
+		ScreenPrint(83, 14, "버섯 위에서 A키  공격시작");
+		ScreenPrint(83, 15, "타이밍 맞춰서 F키 공격(크리티컬 1.5x)");
+	}
+
 
 	if (player.dead == TRUE)
 	{

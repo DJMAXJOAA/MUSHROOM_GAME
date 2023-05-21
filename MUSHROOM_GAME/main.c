@@ -4,7 +4,7 @@
 
 int main()
 {
-	system("mode con:cols=120 lines=32");
+	system("mode con:cols=121 lines=32");
 	system("MUSHROOM GAME");
 	CreateMap();
 	

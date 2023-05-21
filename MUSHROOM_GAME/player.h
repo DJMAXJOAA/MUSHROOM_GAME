@@ -104,6 +104,7 @@ void PlayerCollide()
 void EnemyTargetChange(EnemyDefault *p)
 {
 	enemy_target = p;
+	ui.Notice = FALSE;	// 돈 얼마 알림 끄기
 }
 
 void PlayerAttack()
@@ -141,17 +142,23 @@ void PlayerAttack()
 			{
 				temp = p_ui->MyAtt;
 				p_ui->MyAtt *= 1.5;
-				ui.critical += 1;
+				ui.Damaged = FALSE;
+				ui.HitEnemy = FALSE;
+				ui.Critical += 1;
 			}
 			else
 			{
-				ui.critical = 0;
+				ui.Damaged = FALSE;
+				ui.HitEnemy = TRUE;
+				ui.Critical = 0;
 			}
 
 			if (p_ui->MyAtt >= enemy_target->hp)	// 1. 적이 내공격에 죽는피일때
 			{
+				ui.Notice = TRUE;		// 돈 얼마먹었는지 알림
+				ui.temp_money = enemy_target->money;
 				ui.Money += enemy_target->money;	// 돈먹고
-				p_ui->MyAtt = temp;
+				p_ui->MyAtt = temp;		// 크리티컬 데미지 초기화
 
 				enemy_target->hp = 0;
 				enemy_target->dead = TRUE;
@@ -161,6 +168,10 @@ void PlayerAttack()
 
 				MissileInit();
 
+				ui.Damaged = FALSE;
+				ui.HitEnemy = FALSE;
+				ui.Critical = 0;
+
 				player.isReady = CANT_ATTACK;
 			}
 
@@ -169,7 +180,7 @@ void PlayerAttack()
 				missile->extinct = TRUE;
 				missile->x = 82;
 				enemy_target->hp -= p_ui->MyAtt;
-				p_ui->MyAtt = temp;
+				p_ui->MyAtt = temp;		// 크리티컬 데미지 초기화
 				ui.second = ATTACK_COOLDOWN;
 			}
 		}
@@ -178,7 +189,9 @@ void PlayerAttack()
 			missile->x = 82;
 			missile->extinct = TRUE;
 			Attack_CoolDown();
-			ui.critical = 0;
+			ui.Damaged = TRUE;
+			ui.HitEnemy = FALSE;
+			ui.Critical = 0;
 		}
 	}
 }
@@ -230,7 +243,9 @@ void AttackTiming()
 		missile1.x = 82;
 		missile1.extinct = TRUE;
 		Attack_CoolDown();
-		ui.critical = 0;
+		ui.Damaged = TRUE;
+		ui.HitEnemy = FALSE;
+		ui.Critical = 0;
 	}
 
 	if (missile1.interval <= 0)
@@ -247,7 +262,9 @@ void AttackTiming()
 		missile2.x = 82;
 		missile2.extinct = TRUE;
 		Attack_CoolDown();
-		ui.critical = 0;
+		ui.Damaged = TRUE;
+		ui.HitEnemy = FALSE;
+		ui.Critical = 0;
 	}
 
 	if (missile2.interval <= 0)
@@ -263,7 +280,9 @@ void AttackTiming()
 		Attack_CoolDown();
 		player.isReady = CAN_ATTACK;
 		MissileInit();
-		ui.critical = 0;
+		ui.Damaged = TRUE;
+		ui.HitEnemy = FALSE;
+		ui.Critical = 0;
 	}
 	if (missile3.extinct == TRUE)
 	{

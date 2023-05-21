@@ -12,8 +12,24 @@ typedef struct UI
 	double EnemyAtt;
 	double second;
 	double respawn;
-	int critical;
+	int Critical;
+	int HitEnemy;
+	int Damaged;
+	int Notice;
+	int temp_money;
+	int Danger;
 }UI;
 
 UI ui;
 UI* p_ui = &ui;
+
+void InitUI();	// ui √ ±‚»≠
+
+void InitUI()
+{
+	ui.Critical = 0;
+	ui.HitEnemy = FALSE;
+	ui.Damaged = FALSE;
+	ui.Notice = FALSE;
+	ui.Danger = FALSE;
+}
