@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "setting.h"
 #include "create_map.h"
 
@@ -8,6 +9,7 @@ int main()
 	CreateMap();
 	
 	ScreenInit();
+	StageInit(1);
 	Init();		// √ ±‚»≠
 
 

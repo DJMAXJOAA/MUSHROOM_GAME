@@ -6,8 +6,8 @@
 #define CANT_ATTACK 0
 #define CAN_ATTACK 1
 #define NOW_ATTACKING 2
-#define ATTACK_COOLDOWN 0.5
-#define RESPAWN_TIME 1
+#define ATTACK_COOLDOWN 0.1
+#define RESPAWN_TIME 0.1
 
 char PLAYER_STR1[] = "　△　";		
 char PLAYER_STR2[] = "◁▣▷";
@@ -27,25 +27,31 @@ typedef struct Player
 
 typedef struct Missile
 {
-	float x;
-	float y;
-	float speed;
+	double x;
+	double y;
+	double speed;
 	int interval;
 	int extinct;
 }Missile;
 
 Player player;
+
+Missile* missile;
+Missile init_missile;
 Missile missile1;
 Missile missile2;
 Missile missile3;
 
-void PlayerMove();
-void PlayerCollide();
-void EnemyTargetChange(EnemyDefault *p);
-void PlayerAttack();
-int WallCheck(int x, int y);
-int ObstacleCheck();
-void AttackTiming();
+void PlayerMove();							// 캐릭터 움직임 (공격중일때 못움직임)
+void PlayerCollide();						// 캐릭터와 타 오브젝트 충돌판정(중앙)
+void EnemyTargetChange(EnemyDefault *p);	// 캐릭과 적과 닿으면 적으로 타겟 고정
+void PlayerAttack();						// 캐릭터 공격
+int WallCheck(int x, int y);				// 캐릭터 벽 판정 체크
+int ObstacleCheck();						// 캐릭터 장애물 판정 체크
+void AttackTiming();						// 캐릭터 공격시 타이밍 미사일 이동관련
+void MissileTargetChange(Missile* p);		// 판정선 근처에서 미사일의 참조를 바꿔준다
+void MissileInit();							// 미사일 초기화
+void Attack_CoolDown();						// 공격 쿨타임
 
 void PlayerMove()
 {
@@ -103,84 +109,66 @@ void EnemyTargetChange(EnemyDefault *p)
 
 void PlayerAttack()
 {
-	if (enemy_target->dead == 0)
+	if (enemy_target->dead == 0)	// ui창에 체력 공격력
 	{
 		p_ui->EnemyHP = enemy_target->hp;
 		p_ui->EnemyAtt = enemy_target->att;
 	}
-	if (player.isReady == CANT_ATTACK)
+
+	if (player.isReady == CANT_ATTACK)	// 적이랑 닿으면 공격 준비상태
 	{
 		if (player.collide.x == enemy_target->position.x || player.collide.y == enemy_target->position.y) player.isReady = CAN_ATTACK;
 	}
+
 	if (player.isReady == CAN_ATTACK)
 	{
+		MissileInit();
+		MissileTargetChange(&init_missile);
 		if (player.collide.x != enemy_target->position.x || player.collide.y != enemy_target->position.y) player.isReady = CANT_ATTACK;
 	}
+
 	if (player.isReady == CAN_ATTACK && GetAsyncKeyState(0x41) & 0x8000)
 	{
 		player.isReady = NOW_ATTACKING;
 		ui.second = 0;
 	}
 
-	if (player.isReady == NOW_ATTACKING && ui.second <= 0)
-	{
-		ui.second = 0;
-	}
 	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && ui.second == 0)
 	{
-		if (missile1.x >= 97 && missile1.x <= 103)
+		if (missile->x >= 97 && missile->x <= 103)	// 공격 타이밍 맞으면
 		{
-			enemy_target->hp -= ui.MyAtt;
-			missile1.extinct == TRUE;
-			ui.second = ATTACK_COOLDOWN;
+			if (p_ui->MyAtt >= enemy_target->hp)	// 1. 적이 내공격에 죽는피일때
+			{
+				ui.Money += enemy_target->money;	// 돈먹고
+
+				enemy_target->hp = 0;
+				enemy_target->dead = TRUE;
+				p_ui->EnemyHP = 0;
+				p_ui->EnemyAtt = 0;
+				enemy_target = &enemy;		// 적 죽이고 초기화
+
+				MissileInit();
+
+				player.isReady = CANT_ATTACK;
+			}
+
+			else	// 적이 공격해도 안죽음 : 적 피만 깎음
+			{
+				missile->extinct = TRUE;
+				missile->x = 82;
+				enemy_target->hp -= p_ui->MyAtt;
+				ui.second = ATTACK_COOLDOWN;
+			}
 		}
-		else
+		else if (missile->x > 90)	// 공격 타이밍 안맞으면 : 내 피가 깎임
 		{
-			ui.MyHP -= enemy_target->att;
-			missile1.extinct == TRUE;
-			ui.second = ATTACK_COOLDOWN;
+			missile->x = 82;
+			missile->extinct = TRUE;
+			Attack_CoolDown();
 		}
-	}
-
-	if (player.isReady == NOW_ATTACKING && missile3.extinct == TRUE)
-	{
-		if (p_ui->MyAtt >= enemy_target->hp)
-		{
-			ui.Money += enemy_target->money;
-			p_ui->MyHP -= enemy_target->att;
-			enemy_target->hp = 0;
-			enemy_target->dead = TRUE;
-			p_ui->EnemyHP = 0;
-			p_ui->EnemyAtt = 0;
-			enemy_target = &enemy;
-
-			missile1.extinct = FALSE;
-			missile2.extinct = FALSE;
-			missile3.extinct = FALSE;
-			missile1.interval = 20;
-			missile2.interval = 10;
-			missile3.interval = 20;
-
-			player.isReady = CANT_ATTACK;	
-		}
-		else
-		{
-			p_ui->MyHP -= enemy_target->att;
-			enemy_target->hp -= p_ui->MyAtt;
-
-			missile1.extinct = FALSE;
-			missile2.extinct = FALSE;
-			missile3.extinct = FALSE;
-			missile1.interval = 20;
-			missile2.interval = 10;
-			missile3.interval = 20;
-			
-			player.isReady = CAN_ATTACK;
-		}
-		ui.second = 0;
-		ui.timer = 0;
 	}
 }
+
 
 int WallCheck(int x, int y)
 {
@@ -211,36 +199,84 @@ int ObstacleCheck()
 
 void AttackTiming()
 {
-	if (player.isReady == NOW_ATTACKING && missile1.x <= 118 && missile1.extinct == FALSE)
+	if (missile1.x >= 90 && missile1.extinct == FALSE) MissileTargetChange(&missile1);
+	if (missile2.x >= 90 && missile2.extinct == FALSE) MissileTargetChange(&missile2);
+	if (missile3.x >= 90 && missile3.extinct == FALSE) MissileTargetChange(&missile3);
+
+	if (player.isReady == NOW_ATTACKING)
 	{
-		missile1.x += missile1.speed;
 		missile1.interval--;
+		if (missile1.x <= 118 && missile1.extinct == FALSE)
+		{
+			missile1.x += missile1.speed;
+		}
 	}
-	else if(missile1.x > 118 && missile1.extinct == TRUE)
+	if(missile1.x > 118)
 	{
 		missile1.x = 82;
 		missile1.extinct = TRUE;
+		Attack_CoolDown();
 	}
 
-	if (missile1.interval <= 0 && missile2.x <= 118 && missile2.extinct == FALSE)
+	if (missile1.interval <= 0)
 	{
-		missile2.x += missile2.speed;
 		missile2.interval--;
+		if (missile2.x <= 118 && missile2.extinct == FALSE)
+		{
+			missile2.x += missile2.speed;
+
+		}
 	}
-	else if (missile2.x > 118 && missile2.extinct == TRUE)
+	if (missile2.x > 118 && missile1.extinct == TRUE)
 	{
 		missile2.x = 82;
 		missile2.extinct = TRUE;
+		Attack_CoolDown();
 	}
 
-	if (missile2.interval <= 0 && missile3.x <= 118 && missile3.extinct == FALSE)
+	if (missile2.interval <= 0)
 	{
-		missile3.x += missile3.speed;
 		missile3.interval--;
+		if (missile3.x <= 118 && missile3.extinct == FALSE)
+		{
+			missile3.x += missile3.speed;
+		}
 	}
-	else if (missile3.x > 118 && missile3.extinct == TRUE)
+	if (missile3.x > 118 || missile3.extinct == TRUE)
 	{
-		missile3.x = 82;
-		missile3.extinct = TRUE;
+		Attack_CoolDown();
+		player.isReady = CAN_ATTACK;
+		MissileInit();
+	}
+}
+
+void MissileTargetChange(Missile* p)
+{
+	missile = p;
+}
+
+void MissileInit()
+{
+	missile1.x = 82;
+	missile2.x = 82;
+	missile3.x = 82;
+	missile1.extinct = FALSE;
+	missile2.extinct = FALSE;
+	missile3.extinct = FALSE;
+	missile1.interval = 25;
+	missile2.interval = 25;
+	missile3.interval = 25;
+}
+
+void Attack_CoolDown()
+{
+	if (enemy_target->att >= ui.MyHP)
+	{
+		ui.MyHP = 0;
+	}
+	else
+	{
+		ui.MyHP -= enemy_target->att;
+		ui.second = ATTACK_COOLDOWN;
 	}
 }

@@ -10,9 +10,8 @@ typedef struct UI
 	int MyAtt;
 	int EnemyHP;
 	int EnemyAtt;
-	int timer;
-	float second;
-	float respawn;
+	double second;
+	double respawn;
 }UI;
 
 UI ui;

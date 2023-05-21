@@ -49,7 +49,7 @@ void ScreenRelease()
 	CloseHandle(g_hScreen[1]);
 }
 
-void ScreenPrint(float x, float y, char* string)
+void ScreenPrint(double x, double y, char* string)
 {
 	DWORD dw;
 	COORD CursorPosition = { x, y };

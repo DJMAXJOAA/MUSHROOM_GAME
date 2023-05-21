@@ -1,9 +1,11 @@
 ﻿#pragma once
 #define _CRT_SECURE_NO_WARNINGS
+#define CLOCK 20	// 프레임당 밀리초
 #include "all_include.h"
 #include "Screen.h"
 #include "player.h"
 
+const double fps = CLOCK / (double)1000;
 
 enum
 {
@@ -11,9 +13,8 @@ enum
 	GRAY, D_GRAY, BLUE, GREEN, SKYBLUE, RED, VIOLET, YELLOW, WHITE
 };
 
-int check = 0;
-
-void Init();						// 초기화(초기 설정)
+void Init();						// 초기화(초기 설정, 변하지 않는 것들)
+void StageInit(int number);			// 초기화(맵별로 다름. 몇번맵?)
 void Update();						// 데이터 갱신
 void Render();						// 화면 출력
 void WaitRender(clock_t OldTime);	// 화면 지연시간
@@ -35,22 +36,26 @@ void Init()
 	player.isReady = CANT_ATTACK;
 	player.dead = FALSE;
 
+	init_missile.x = 82;
+	init_missile.y = 11;
+	init_missile.speed = 1.5;
+	init_missile.interval = 25;
+	init_missile.extinct = FALSE;
+
 	missile1.x = 82;
 	missile1.y = 11;
 	missile1.speed = 1.5;
-	missile1.interval = 20;
+	missile1.interval = 25;
 	missile1.extinct = FALSE;
-
 	missile2.x = 82;
 	missile2.y = 11;
 	missile2.speed = 1.5;
-	missile2.interval = 10;
+	missile2.interval = 25;
 	missile2.extinct = FALSE;
-
 	missile3.x = 82;
 	missile3.y = 11;
 	missile3.speed = 1.5;
-	missile3.interval = 20;
+	missile3.interval = 25;
 	missile3.extinct = FALSE;
 
 	ui.position.x = 81;
@@ -60,18 +65,25 @@ void Init()
 	ui.MyHP = 100;
 	ui.EnemyAtt = 0;
 	ui.EnemyHP = 0;
-	ui.timer = 0;
 	ui.second = 0;
+}
 
-	enemy1.att = 10;
-	enemy1.hp = 30;
-	enemy1.dead = FALSE;
-	enemy1.money = 100;
+void StageInit(int number)
+{
+	switch (number)
+	{
+	case 1:
+		enemy_target = &enemy;
+		enemy1.att = 10;
+		enemy1.hp = 100;
+		enemy1.dead = FALSE;
+		enemy1.money = 100;
 
-	enemy2.att = 15;
-	enemy2.hp = 25;
-	enemy2.dead = FALSE;
-	enemy2.money = 150;
+		enemy2.att = 15;
+		enemy2.hp = 150;
+		enemy2.dead = FALSE;
+		enemy2.money = 150;
+	}
 }
 
 void Update()
@@ -156,16 +168,18 @@ void Render()
 
 	if (player.isReady == NOW_ATTACKING)
 	{
-		if(missile1.extinct == FALSE) ScreenPrint(missile1.x, missile1.y, "★");
+		SetColor(YELLOW);
+		if (missile1.extinct == FALSE) ScreenPrint(missile1.x, missile1.y, "★");
 		if(missile1.interval <= 0 && missile2.extinct == FALSE) ScreenPrint(missile2.x, missile2.y, "★");
 		if(missile2.interval <= 0 && missile3.extinct == FALSE) ScreenPrint(missile3.x, missile3.y, "★");
+		SetColor(WHITE);
 	}
 
-	ScreenPrint(98, 10, "┏━━━┓ ");
+	ScreenPrint(97, 10, "┏━━━━━┓ ");
 	//ScreenPrint(98, 11, "┃ ");
 
 	//ScreenPrint(102, 11, "┃ ");
-	ScreenPrint(98, 12, "┗━━━┛ ");
+	ScreenPrint(97, 12, "┗━━━━━┛ ");
 
 	sprintf(string, "이동 좌표 : %d, %d", player.collide.x, player.collide.y);
 	ScreenPrint(83, 1, string);
@@ -185,10 +199,19 @@ void Render()
 
 	if (player.isReady == NOW_ATTACKING)
 	{
-		sprintf(string, "남은 채집 시간 : %.1lf초", ui.second);
+		sprintf(string, "공격 쿨타임 : %.2lf초", ui.second);
 		ScreenPrint(85, 15, string);
-		sprintf(string, "미사일 좌표 : %.1lf", missile1.x);
+		sprintf(string, "미사일 좌표 : %.1lf", missile->x);
 		ScreenPrint(85, 16, string);
+		sprintf(string, "미사일 : %d", missile->extinct);
+		ScreenPrint(85, 17, string);
+
+		sprintf(string, "미사일1 : %d", missile1.interval);
+		ScreenPrint(85, 19, string);
+		sprintf(string, "미사일2 : %d", missile2.interval);
+		ScreenPrint(85, 20, string);
+		sprintf(string, "미사일3 : %d", missile3.interval);
+		ScreenPrint(85, 21, string);
 	}
 
 	if (player.dead == TRUE)
@@ -208,16 +231,11 @@ void WaitRender(clock_t OldTime)
 	while (1)
 	{
 		CurTime = clock();
-		if (CurTime - OldTime > 33)
+		if (CurTime - OldTime > CLOCK)
 		{
-			if (player.isReady == NOW_ATTACKING)
-			{
-				ui.second -= 0.03;				
-			}
-			if (player.dead == TRUE)
-			{
-				ui.respawn -= 0.03;
-			}
+			if (ui.second <= fps) ui.second = 0;
+			else if (player.isReady == NOW_ATTACKING) ui.second -= fps;
+			if (player.dead == TRUE) ui.respawn -= fps;
 			break;
 		}
 	}
