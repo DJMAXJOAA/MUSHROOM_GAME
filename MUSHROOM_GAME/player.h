@@ -2,12 +2,11 @@
 #include "all_include.h"
 #include "UI.h"
 
-
 #define CANT_ATTACK 0
 #define CAN_ATTACK 1
 #define NOW_ATTACKING 2
 #define ATTACK_COOLDOWN 0.1
-#define RESPAWN_TIME 0.1
+#define RESPAWN_TIME 1
 
 char PLAYER_STR1[] = "　△　";		
 char PLAYER_STR2[] = "◁▣▷";
@@ -109,6 +108,7 @@ void EnemyTargetChange(EnemyDefault *p)
 
 void PlayerAttack()
 {
+	double temp = p_ui->MyAtt;
 	if (enemy_target->dead == 0)	// ui창에 체력 공격력
 	{
 		p_ui->EnemyHP = enemy_target->hp;
@@ -135,11 +135,23 @@ void PlayerAttack()
 
 	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && ui.second == 0)
 	{
-		if (missile->x >= 97 && missile->x <= 103)	// 공격 타이밍 맞으면
+		if (missile->x >= 98 && missile->x <= 102)	// 공격 타이밍 맞으면
 		{
+			if (missile->x == 100)			// 정박 : 크리티컬
+			{
+				temp = p_ui->MyAtt;
+				p_ui->MyAtt *= 1.5;
+				ui.critical += 1;
+			}
+			else
+			{
+				ui.critical = 0;
+			}
+
 			if (p_ui->MyAtt >= enemy_target->hp)	// 1. 적이 내공격에 죽는피일때
 			{
 				ui.Money += enemy_target->money;	// 돈먹고
+				p_ui->MyAtt = temp;
 
 				enemy_target->hp = 0;
 				enemy_target->dead = TRUE;
@@ -157,6 +169,7 @@ void PlayerAttack()
 				missile->extinct = TRUE;
 				missile->x = 82;
 				enemy_target->hp -= p_ui->MyAtt;
+				p_ui->MyAtt = temp;
 				ui.second = ATTACK_COOLDOWN;
 			}
 		}
@@ -242,9 +255,14 @@ void AttackTiming()
 			missile3.x += missile3.speed;
 		}
 	}
-	if (missile3.x > 118 || missile3.extinct == TRUE)
+	if (missile3.x > 118 && missile2.extinct == TRUE)
 	{
 		Attack_CoolDown();
+		player.isReady = CAN_ATTACK;
+		MissileInit();
+	}
+	if (missile3.extinct == TRUE)
+	{
 		player.isReady = CAN_ATTACK;
 		MissileInit();
 	}
@@ -263,9 +281,9 @@ void MissileInit()
 	missile1.extinct = FALSE;
 	missile2.extinct = FALSE;
 	missile3.extinct = FALSE;
-	missile1.interval = 25;
-	missile2.interval = 25;
-	missile3.interval = 25;
+	missile1.interval = random(10, 30);
+	missile2.interval = random(10, 31);
+	missile3.interval = random(10, 32);
 }
 
 void Attack_CoolDown()

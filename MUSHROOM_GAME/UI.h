@@ -6,12 +6,13 @@ typedef struct UI
 {
 	Position position;
 	int Money;
-	int MyHP;
-	int MyAtt;
-	int EnemyHP;
-	int EnemyAtt;
+	double MyHP;
+	double MyAtt;
+	double EnemyHP;
+	double EnemyAtt;
 	double second;
 	double respawn;
+	int critical;
 }UI;
 
 UI ui;

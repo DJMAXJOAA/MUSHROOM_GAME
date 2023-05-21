@@ -15,3 +15,4 @@ EnemyDefault enemy1;
 EnemyDefault enemy2;
 
 EnemyDefault* enemy_target = &enemy;
+

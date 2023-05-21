@@ -19,6 +19,12 @@ int main()
 		int nKey = GetKeyEvent();
 		if (nKey == 'q')
 			break;
+		if (nKey == 'r')
+		{
+			Init();
+			StageInit(1);
+		}
+			
 
 		if (player.dead == FALSE)
 		{
@@ -27,6 +33,8 @@ int main()
 			PlayerAttack();
 			AttackTiming();
 		}
+
+
 
 		Render();	//화면 출력
 		WaitRender(clock());

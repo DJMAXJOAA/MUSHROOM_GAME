@@ -1,6 +1,6 @@
 ﻿#pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#define CLOCK 20	// 프레임당 밀리초
+#define CLOCK 15	// 프레임당 밀리초
 #include "all_include.h"
 #include "Screen.h"
 #include "player.h"
@@ -31,31 +31,31 @@ void Init()
 	player.strPlayer3 = (char*)malloc(sizeof(char) * player.nLength);
 	strcpy(player.strPlayer3, PLAYER_STR3);
 
-	player.position.x = 4;
-	player.position.y = 15;
+	player.position.x = 36;
+	player.position.y = 14;
 	player.isReady = CANT_ATTACK;
 	player.dead = FALSE;
 
-	init_missile.x = 82;
-	init_missile.y = 11;
-	init_missile.speed = 1.5;
-	init_missile.interval = 25;
+	init_missile.x = 0;
+	init_missile.y = 0;
+	init_missile.speed = 0;
+	init_missile.interval = 0;
 	init_missile.extinct = FALSE;
 
 	missile1.x = 82;
 	missile1.y = 11;
 	missile1.speed = 1.5;
-	missile1.interval = 25;
+	missile1.interval = random(10, 30);
 	missile1.extinct = FALSE;
 	missile2.x = 82;
 	missile2.y = 11;
 	missile2.speed = 1.5;
-	missile2.interval = 25;
+	missile2.interval = random(11, 30);
 	missile2.extinct = FALSE;
 	missile3.x = 82;
 	missile3.y = 11;
 	missile3.speed = 1.5;
-	missile3.interval = 25;
+	missile3.interval = random(12, 30);
 	missile3.extinct = FALSE;
 
 	ui.position.x = 81;
@@ -188,30 +188,36 @@ void Render()
 	sprintf(string, "돈 : %d", ui.Money);
 	ScreenPrint(83, 3, string);
 
-	sprintf(string, "내 체력 : %d", ui.MyHP);
+	sprintf(string, "내 체력 : %.1lf", ui.MyHP);
 	ScreenPrint(83, 4, string);
-	sprintf(string, "내 공격력 : %d", ui.MyAtt);
+	sprintf(string, "내 공격력 : %.1lf", ui.MyAtt);
 	ScreenPrint(83, 5, string);
-	sprintf(string, "적 체력 : %d", ui.EnemyHP);
+	sprintf(string, "적 체력 : %.1lf", ui.EnemyHP);
 	ScreenPrint(83, 6, string);
-	sprintf(string, "적 공격력 : %d", ui.EnemyAtt);
+	sprintf(string, "적 공격력 : %.1lf", ui.EnemyAtt);
 	ScreenPrint(83, 7, string);
 
-	if (player.isReady == NOW_ATTACKING)
-	{
-		sprintf(string, "공격 쿨타임 : %.2lf초", ui.second);
-		ScreenPrint(85, 15, string);
-		sprintf(string, "미사일 좌표 : %.1lf", missile->x);
-		ScreenPrint(85, 16, string);
-		sprintf(string, "미사일 : %d", missile->extinct);
-		ScreenPrint(85, 17, string);
+	//if (player.isReady == NOW_ATTACKING)
+	//{
+	//	sprintf(string, "공격 쿨타임 : %.2lf초", ui.second);
+	//	ScreenPrint(85, 15, string);
+	//	sprintf(string, "미사일 좌표 : %.1lf", missile->x);
+	//	ScreenPrint(85, 16, string);
+	//	sprintf(string, "미사일 : %d", missile->extinct);
+	//	ScreenPrint(85, 17, string);
 
-		sprintf(string, "미사일1 : %d", missile1.interval);
-		ScreenPrint(85, 19, string);
-		sprintf(string, "미사일2 : %d", missile2.interval);
-		ScreenPrint(85, 20, string);
-		sprintf(string, "미사일3 : %d", missile3.interval);
-		ScreenPrint(85, 21, string);
+	//	sprintf(string, "미사일1 : %d", missile1.interval);
+	//	ScreenPrint(85, 19, string);
+	//	sprintf(string, "미사일2 : %d", missile2.interval);
+	//	ScreenPrint(85, 20, string);
+	//	sprintf(string, "미사일3 : %d", missile3.interval);
+	//	ScreenPrint(85, 21, string);
+	//}
+
+	if (ui.critical >= 1)
+	{
+		sprintf(string, "%d번째 크리티컬!! 1.5x Damage", ui.critical);
+		ScreenPrint(83, 15, string);
 	}
 
 	if (player.dead == TRUE)
