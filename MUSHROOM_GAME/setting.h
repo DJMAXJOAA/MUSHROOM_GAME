@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include "all_include.h"
 #include "Screen.h"
@@ -13,12 +13,12 @@ enum
 
 int check = 0;
 
-void Init();						// ÃÊ±âÈ­(ÃÊ±â ¼³Á¤)
-void Update();						// µ¥ÀÌÅÍ °»½Å
-void Render();						// È­¸é Ãâ·Â
-void WaitRender(clock_t OldTime);	// È­¸é Áö¿¬½Ã°£
-void Release();						// ÇÒ´ç ÇØÁ¦
-int GetKeyEvent();					// Å° ÀÔ·Â¹Ş±â
+void Init();						// ì´ˆê¸°í™”(ì´ˆê¸° ì„¤ì •)
+void Update();						// ë°ì´í„° ê°±ì‹ 
+void Render();						// í™”ë©´ ì¶œë ¥
+void WaitRender(clock_t OldTime);	// í™”ë©´ ì§€ì—°ì‹œê°„
+void Release();						// í• ë‹¹ í•´ì œ
+int GetKeyEvent();					// í‚¤ ì…ë ¥ë°›ê¸°
 
 void Init()
 {
@@ -35,7 +35,25 @@ void Init()
 	player.isReady = CANT_ATTACK;
 	player.dead = FALSE;
 
-	ui.position.x = 80;
+	missile1.x = 82;
+	missile1.y = 11;
+	missile1.speed = 1.5;
+	missile1.interval = 20;
+	missile1.extinct = FALSE;
+
+	missile2.x = 82;
+	missile2.y = 11;
+	missile2.speed = 1.5;
+	missile2.interval = 10;
+	missile2.extinct = FALSE;
+
+	missile3.x = 82;
+	missile3.y = 11;
+	missile3.speed = 1.5;
+	missile3.interval = 20;
+	missile3.extinct = FALSE;
+
+	ui.position.x = 81;
 	ui.position.y = 0;
 	ui.Money = 0;
 	ui.MyAtt = 10;
@@ -74,15 +92,15 @@ void Update()
 void Render()
 {
 	ScreenClear();
-	/*¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡*/
+	/*â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€*/
 
 	char string[100] = { 0 };
 
-	for (int i = 0; i < WIDTH; i++) ScreenPrint(ui.position.x, ui.position.y + i, "¦­");
+	for (int i = 0; i < WIDTH; i++) ScreenPrint(ui.position.x, ui.position.y + i, "â”ƒ");
 	for (int i = 1; i < HEIGHT; i++) { 
-		ScreenPrint(ui.position.x + i, 9, "¦¬"); 
-		ScreenPrint(ui.position.x + i, 11, " "); 
-		ScreenPrint(ui.position.x + i, 13, "¦¬"); }
+		ScreenPrint(ui.position.x + i, 9, "â”"); 
+		ScreenPrint(ui.position.x + i, 13, "â”"); 
+	}
 
 	if (player.dead == FALSE)
 	{
@@ -97,12 +115,14 @@ void Render()
 		SetColor(WHITE);
 	}
 
+	
+
 	for (int y = 0; y < WIDTH; y++)
 		for (int x = 0; x < HEIGHT; x++)
 		{
-			if (map[y][x] == WALL) ScreenPrint(x * 2, y, "¡á");
-			if (map[y][x] == PORTAL) { SetColor(BLUE); ScreenPrint(x * 2, y, "¢Ì"); SetColor(WHITE);}
-			if (map[y][x] == OBSTACLE) { SetColor(D_RED); ScreenPrint(x * 2, y, "¡Ú"); SetColor(WHITE);	}
+			if (map[y][x] == WALL) ScreenPrint(x * 2, y, "â– ");
+			if (map[y][x] == PORTAL) { SetColor(BLUE); ScreenPrint(x * 2, y, "â–©"); SetColor(WHITE);}
+			if (map[y][x] == OBSTACLE) { SetColor(D_RED); ScreenPrint(x * 2, y, "â˜…"); SetColor(WHITE);	}
 			if (map[y][x] == ENEMY1)
 			{
 				SetColor(D_GREEN);
@@ -110,7 +130,7 @@ void Render()
 				{
 					enemy1.position.x = x * 2;
 					enemy1.position.y = y;
-					ScreenPrint(enemy1.position.x, enemy1.position.y, "¢À");
+					ScreenPrint(enemy1.position.x, enemy1.position.y, "â™£");
 					if (player.collide.x == enemy1.position.x && player.collide.y == enemy1.position.y) EnemyTargetChange(&enemy1);
 				}
 				SetColor(WHITE);
@@ -122,50 +142,69 @@ void Render()
 				{
 					enemy2.position.x = x * 2;
 					enemy2.position.y = y;
-					ScreenPrint(enemy2.position.x, enemy2.position.y, "¢À");
+					ScreenPrint(enemy2.position.x, enemy2.position.y, "â™£");
 					if (player.collide.x == enemy2.position.x && player.collide.y == enemy2.position.y) EnemyTargetChange(&enemy2);	
 				}
 				SetColor(WHITE);
 			}
 		}
 
-	sprintf(string, "ÀÌµ¿ ÁÂÇ¥ : %d, %d", player.collide.x, player.collide.y);
+
+	SetColor(YELLOW);
+	ScreenPrint(100, 11, "â˜†"); // 100, 11 ë³„ ì¢Œí‘œ
+	SetColor(WHITE);
+
+	if (player.isReady == NOW_ATTACKING)
+	{
+		if(missile1.extinct == FALSE) ScreenPrint(missile1.x, missile1.y, "â˜…");
+		if(missile1.interval <= 0 && missile2.extinct == FALSE) ScreenPrint(missile2.x, missile2.y, "â˜…");
+		if(missile2.interval <= 0 && missile3.extinct == FALSE) ScreenPrint(missile3.x, missile3.y, "â˜…");
+	}
+
+	ScreenPrint(98, 10, "â”â”â”â”â”“ ");
+	//ScreenPrint(98, 11, "â”ƒ ");
+
+	//ScreenPrint(102, 11, "â”ƒ ");
+	ScreenPrint(98, 12, "â”—â”â”â”â”› ");
+
+	sprintf(string, "ì´ë™ ì¢Œí‘œ : %d, %d", player.collide.x, player.collide.y);
 	ScreenPrint(83, 1, string);
-	sprintf(string, "°ø°İ °¡´É ¿©ºÎ : %d", player.isReady);
+	sprintf(string, "ê³µê²© ê°€ëŠ¥ ì—¬ë¶€ : %d", player.isReady);
 	ScreenPrint(83, 2, string);
-	sprintf(string, "µ· : %d", ui.Money);
+	sprintf(string, "ëˆ : %d", ui.Money);
 	ScreenPrint(83, 3, string);
 
-	sprintf(string, "³» Ã¼·Â : %d", ui.MyHP);
+	sprintf(string, "ë‚´ ì²´ë ¥ : %d", ui.MyHP);
 	ScreenPrint(83, 4, string);
-	sprintf(string, "³» °ø°İ·Â : %d", ui.MyAtt);
+	sprintf(string, "ë‚´ ê³µê²©ë ¥ : %d", ui.MyAtt);
 	ScreenPrint(83, 5, string);
-	sprintf(string, "Àû Ã¼·Â : %d", ui.EnemyHP);
+	sprintf(string, "ì  ì²´ë ¥ : %d", ui.EnemyHP);
 	ScreenPrint(83, 6, string);
-	sprintf(string, "Àû °ø°İ·Â : %d", ui.EnemyAtt);
+	sprintf(string, "ì  ê³µê²©ë ¥ : %d", ui.EnemyAtt);
 	ScreenPrint(83, 7, string);
 
 	if (player.isReady == NOW_ATTACKING)
 	{
-		sprintf(string, "³²Àº Ã¤Áı ½Ã°£ : %.1lfÃÊ", ui.second);
-		ScreenPrint(85, 11, string);
+		sprintf(string, "ë‚¨ì€ ì±„ì§‘ ì‹œê°„ : %.1lfì´ˆ", ui.second);
+		ScreenPrint(85, 15, string);
+		sprintf(string, "ë¯¸ì‚¬ì¼ ì¢Œí‘œ : %.1lf", missile1.x);
+		ScreenPrint(85, 16, string);
 	}
 
 	if (player.dead == TRUE)
 	{
-		sprintf(string, "´ç½ÅÀº Á×¾ú½À´Ï´Ù! °ğ ºÎÈ°ÇÕ´Ï´Ù");
-		ScreenPrint(83, 29, string);
-		sprintf(string, "³²Àº ¸®½ºÆù ½Ã°£ : %.1lfÃÊ", ui.respawn);
+		ScreenPrint(83, 29, "ë‹¹ì‹ ì€ ì£½ì—ˆìŠµë‹ˆë‹¤! ê³§ ë¶€í™œí•©ë‹ˆë‹¤");
+		sprintf(string, "ë‚¨ì€ ë¦¬ìŠ¤í° ì‹œê°„ : %.1lfì´ˆ", ui.respawn);
 		ScreenPrint(83, 30, string);
 	}
 
-	/*¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡*/
+	/*â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€*/
 	ScreenFlipping();
 }
 
 void WaitRender(clock_t OldTime)
 {
-	clock_t CurTime;	//clock_t ¼öÇà½Ã°£ ÃøÁ¤
+	clock_t CurTime;	//clock_t ìˆ˜í–‰ì‹œê°„ ì¸¡ì •
 	while (1)
 	{
 		CurTime = clock();
@@ -173,7 +212,7 @@ void WaitRender(clock_t OldTime)
 		{
 			if (player.isReady == NOW_ATTACKING)
 			{
-				ui.second -= 0.03;
+				ui.second -= 0.03;				
 			}
 			if (player.dead == TRUE)
 			{
@@ -184,15 +223,15 @@ void WaitRender(clock_t OldTime)
 	}
 }
 
-void Release()	//ÇØÁ¦
+void Release()	//í•´ì œ
 {
 
 }
 
 int GetKeyEvent()
 {
-	if (_kbhit())	//_kbhit : Å°º¸µå°¡ ´­·¶À½À» È®ÀÎÇÏ´Â ÇÔ¼ö
-		return _getch();	//ÀĞÀº ¹®ÀÚ ¹İÈ¯
+	if (_kbhit())	//_kbhit : í‚¤ë³´ë“œê°€ ëˆŒë €ìŒì„ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
+		return _getch();	//ì½ì€ ë¬¸ì ë°˜í™˜
 
 	return -1;
 }

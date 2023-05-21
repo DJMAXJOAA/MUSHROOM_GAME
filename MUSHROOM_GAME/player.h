@@ -7,11 +7,11 @@
 #define CAN_ATTACK 1
 #define NOW_ATTACKING 2
 #define ATTACK_COOLDOWN 0.5
-#define RESPAWN_TIME 3
+#define RESPAWN_TIME 1
 
-char PLAYER_STR1[] = "□△□";		
+char PLAYER_STR1[] = "　△　";		
 char PLAYER_STR2[] = "◁▣▷";
-char PLAYER_STR3[] = "□▽□";		// 플레이어의 생김새
+char PLAYER_STR3[] = "　▽　";		// 플레이어의 생김새
 
 typedef struct Player
 {
@@ -25,8 +25,19 @@ typedef struct Player
 	int dead;
 }Player;
 
+typedef struct Missile
+{
+	float x;
+	float y;
+	float speed;
+	int interval;
+	int extinct;
+}Missile;
+
 Player player;
-char* change;
+Missile missile1;
+Missile missile2;
+Missile missile3;
 
 void PlayerMove();
 void PlayerCollide();
@@ -34,6 +45,7 @@ void EnemyTargetChange(EnemyDefault *p);
 void PlayerAttack();
 int WallCheck(int x, int y);
 int ObstacleCheck();
+void AttackTiming();
 
 void PlayerMove()
 {
@@ -45,34 +57,34 @@ void PlayerMove()
 			WallCheck(-4, 1) && WallCheck(-4, 0) && WallCheck(-4, -1)) { //왼쪽
 			player.position.x--;
 			player.position.x--;
-			sprintf(player.strPlayer1, "□△□");
+			sprintf(player.strPlayer1, "　△　");
 			sprintf(player.strPlayer2, "◀▣▷");
-			sprintf(player.strPlayer3, "□▽□");
+			sprintf(player.strPlayer3, "　▽　");
 		}
 
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && player.position.x < 75 &&
 			WallCheck(4, 1) && WallCheck(4, 0) && WallCheck(4, -1)) { //오른쪽
 			player.position.x++;
 			player.position.x++;
-			sprintf(player.strPlayer1, "□△□");
+			sprintf(player.strPlayer1, "　△　");
 			sprintf(player.strPlayer2, "◁▣▶");
-			sprintf(player.strPlayer3, "□▽□");
+			sprintf(player.strPlayer3, "　▽　");
 		}
 
 		if (GetAsyncKeyState(VK_UP) & 0x8000 && player.position.y > 0 &&
 			WallCheck(-2, -2) && WallCheck(0, -2) && WallCheck(2, -2)) { //위
 			player.position.y--;
-			sprintf(player.strPlayer1, "□▲□");
+			sprintf(player.strPlayer1, "　▲　");
 			sprintf(player.strPlayer2, "◁▣▷");
-			sprintf(player.strPlayer3, "□▽□");
+			sprintf(player.strPlayer3, "　▽　");
 		}
 
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000 && player.position.y < 35 &&
 			WallCheck(-2, 2) && WallCheck(0, 2) && WallCheck(2, 2)) { //아래
 			player.position.y++;
-			sprintf(player.strPlayer1, "□△□");
+			sprintf(player.strPlayer1, "　△　");
 			sprintf(player.strPlayer2, "◁▣▷");
-			sprintf(player.strPlayer3, "□▼□");
+			sprintf(player.strPlayer3, "　▼　");
 		}
 	}
 
@@ -107,9 +119,30 @@ void PlayerAttack()
 	if (player.isReady == CAN_ATTACK && GetAsyncKeyState(0x41) & 0x8000)
 	{
 		player.isReady = NOW_ATTACKING;
-		ui.second = ATTACK_COOLDOWN;
+		ui.second = 0;
 	}
-	if (player.isReady == NOW_ATTACKING && p_ui->second <= 0)
+
+	if (player.isReady == NOW_ATTACKING && ui.second <= 0)
+	{
+		ui.second = 0;
+	}
+	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && ui.second == 0)
+	{
+		if (missile1.x >= 97 && missile1.x <= 103)
+		{
+			enemy_target->hp -= ui.MyAtt;
+			missile1.extinct == TRUE;
+			ui.second = ATTACK_COOLDOWN;
+		}
+		else
+		{
+			ui.MyHP -= enemy_target->att;
+			missile1.extinct == TRUE;
+			ui.second = ATTACK_COOLDOWN;
+		}
+	}
+
+	if (player.isReady == NOW_ATTACKING && missile3.extinct == TRUE)
 	{
 		if (p_ui->MyAtt >= enemy_target->hp)
 		{
@@ -119,12 +152,28 @@ void PlayerAttack()
 			enemy_target->dead = TRUE;
 			p_ui->EnemyHP = 0;
 			p_ui->EnemyAtt = 0;
-			player.isReady = CANT_ATTACK;
+			enemy_target = &enemy;
+
+			missile1.extinct = FALSE;
+			missile2.extinct = FALSE;
+			missile3.extinct = FALSE;
+			missile1.interval = 20;
+			missile2.interval = 10;
+			missile3.interval = 20;
+
+			player.isReady = CANT_ATTACK;	
 		}
 		else
 		{
 			p_ui->MyHP -= enemy_target->att;
 			enemy_target->hp -= p_ui->MyAtt;
+
+			missile1.extinct = FALSE;
+			missile2.extinct = FALSE;
+			missile3.extinct = FALSE;
+			missile1.interval = 20;
+			missile2.interval = 10;
+			missile3.interval = 20;
 			
 			player.isReady = CAN_ATTACK;
 		}
@@ -158,4 +207,40 @@ int ObstacleCheck()
 	if (WallCheck(-2, 0) == 2) return 1;
 	if (WallCheck(0, 0) == 2) return 1;
 	return 0;
+}
+
+void AttackTiming()
+{
+	if (player.isReady == NOW_ATTACKING && missile1.x <= 118 && missile1.extinct == FALSE)
+	{
+		missile1.x += missile1.speed;
+		missile1.interval--;
+	}
+	else if(missile1.x > 118 && missile1.extinct == TRUE)
+	{
+		missile1.x = 82;
+		missile1.extinct = TRUE;
+	}
+
+	if (missile1.interval <= 0 && missile2.x <= 118 && missile2.extinct == FALSE)
+	{
+		missile2.x += missile2.speed;
+		missile2.interval--;
+	}
+	else if (missile2.x > 118 && missile2.extinct == TRUE)
+	{
+		missile2.x = 82;
+		missile2.extinct = TRUE;
+	}
+
+	if (missile2.interval <= 0 && missile3.x <= 118 && missile3.extinct == FALSE)
+	{
+		missile3.x += missile3.speed;
+		missile3.interval--;
+	}
+	else if (missile3.x > 118 && missile3.extinct == TRUE)
+	{
+		missile3.x = 82;
+		missile3.extinct = TRUE;
+	}
 }

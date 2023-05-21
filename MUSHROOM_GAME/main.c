@@ -23,12 +23,12 @@ int main()
 			PlayerCollide();
 			PlayerMove();
 			PlayerAttack();
+			AttackTiming();
 		}
-
-		Update();	//죽음 체크
 
 		Render();	//화면 출력
 		WaitRender(clock());
+		Update();	//죽음 체크
 	}
 
 	/*===========종료============*/
