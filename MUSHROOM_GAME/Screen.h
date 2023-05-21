@@ -1,6 +1,5 @@
 #pragma once
-#include <stdio.h>
-#include <Windows.h>
+#include "all_include.h"
 
 /* 아래 3개로 더블 버퍼링을 구현 */
 void ScreenInit();

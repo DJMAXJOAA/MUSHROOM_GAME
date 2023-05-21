@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <Windows.h>
-#include "wall.h"
+#include "all_include.h"
+#include "map.h"
 
 typedef struct
 {

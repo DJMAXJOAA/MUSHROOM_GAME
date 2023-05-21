@@ -1,9 +1,12 @@
 #include "setting.h"
+#include "create_map.h"
 
 int main()
 {
-	system("mode con:cols=120 lines=40");
+	system("mode con:cols=120 lines=32");
 	system("MUSHROOM GAME");
+	CreateMap();
+	
 	ScreenInit();
 	Init();		// 초기화
 
@@ -15,11 +18,14 @@ int main()
 		if (nKey == 'q')
 			break;
 
-		PlayerCollide();
-		PlayerMove();
-		PlayerAttack();
+		if (player.dead == FALSE)
+		{
+			PlayerCollide();
+			PlayerMove();
+			PlayerAttack();
+		}
 
-		Update();	//데이터 갱신
+		Update();	//죽음 체크
 
 		Render();	//화면 출력
 		WaitRender(clock());

@@ -1,6 +1,5 @@
 #pragma once
-#include <stdio.h>
-#include <Windows.h>
+#include "all_include.h"
 #include "enemy.h"
 
 typedef struct UI
@@ -13,6 +12,7 @@ typedef struct UI
 	int EnemyAtt;
 	int timer;
 	float second;
+	float respawn;
 }UI;
 
 UI ui;
