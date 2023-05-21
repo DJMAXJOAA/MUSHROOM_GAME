@@ -178,6 +178,7 @@ void PlayerAttack()
 			missile->x = 82;
 			missile->extinct = TRUE;
 			Attack_CoolDown();
+			ui.critical = 0;
 		}
 	}
 }
@@ -229,6 +230,7 @@ void AttackTiming()
 		missile1.x = 82;
 		missile1.extinct = TRUE;
 		Attack_CoolDown();
+		ui.critical = 0;
 	}
 
 	if (missile1.interval <= 0)
@@ -245,6 +247,7 @@ void AttackTiming()
 		missile2.x = 82;
 		missile2.extinct = TRUE;
 		Attack_CoolDown();
+		ui.critical = 0;
 	}
 
 	if (missile2.interval <= 0)
@@ -260,6 +263,7 @@ void AttackTiming()
 		Attack_CoolDown();
 		player.isReady = CAN_ATTACK;
 		MissileInit();
+		ui.critical = 0;
 	}
 	if (missile3.extinct == TRUE)
 	{
