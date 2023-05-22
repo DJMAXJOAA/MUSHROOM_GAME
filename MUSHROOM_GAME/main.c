@@ -9,7 +9,7 @@ int main()
 	CreateMap();
 	
 	ScreenInit();
-	StageInit(1);
+	StageInit(stage_number);
 	Init();		// √ ±‚»≠
 
 

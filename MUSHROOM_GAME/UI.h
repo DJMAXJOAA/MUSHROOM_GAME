@@ -18,6 +18,7 @@ typedef struct UI
 	int Notice;
 	int temp_money;
 	int Danger;
+	int CollideEnemy;
 }UI;
 
 UI ui;
@@ -27,6 +28,7 @@ void InitUI();	// ui √ ±‚»≠
 
 void InitUI()
 {
+	ui.CollideEnemy = FALSE;
 	ui.Critical = 0;
 	ui.HitEnemy = FALSE;
 	ui.Damaged = FALSE;

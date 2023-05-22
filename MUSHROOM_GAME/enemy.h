@@ -8,6 +8,8 @@ typedef struct
 	double att;
 	double dead;
 	double money;
+	char name[10];
+	char info[40];
 }EnemyDefault;
 
 EnemyDefault enemy;

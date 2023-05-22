@@ -6,6 +6,7 @@
 #include "player.h"
 
 const double fps = CLOCK / (double)1000;
+int stage_number = 1;
 
 enum
 {
@@ -14,12 +15,13 @@ enum
 };
 
 void Init();						// 초기화(초기 설정, 변하지 않는 것들)
-void StageInit(int number);			// 초기화(맵별로 다름. 몇번맵?)
+void StageInit(int stage_number);	// 초기화(맵별로 다름. 몇번맵?)
 void Update();						// 데이터 갱신
 void Render();						// 화면 출력
 void WaitRender(clock_t OldTime);	// 화면 지연시간
 void Release();						// 할당 해제
 int GetKeyEvent();					// 키 입력받기
+void MapInit(int(*map)[HEIGHT]);	// 맵 그리기
 
 void Init()
 {
@@ -69,21 +71,45 @@ void Init()
 	InitUI();
 }
 
-void StageInit(int number)
+void StageInit(int stage_number)
 {
-	switch (number)
+	switch (stage_number)
 	{
 	case 1:
+		map_pointer = map1;
 		enemy_target = &enemy;
 		enemy1.att = 10;
 		enemy1.hp = 100;
 		enemy1.dead = FALSE;
 		enemy1.money = 100;
+		strcpy(enemy1.name, "작은버섯");
+		strcpy(enemy1.info, "간단하게 캘 수 있다");
 
 		enemy2.att = 15;
 		enemy2.hp = 150;
 		enemy2.dead = FALSE;
 		enemy2.money = 150;
+		strcpy(enemy2.name, "중간버섯");
+		strcpy(enemy2.info, "살짝 캐기 버겁다");
+		break;
+
+	case 2:
+		map_pointer = map2;
+		enemy_target = &enemy;
+		enemy1.att = 10;
+		enemy1.hp = 100;
+		enemy1.dead = FALSE;
+		enemy1.money = 100;
+		strcpy(enemy1.name, "작은버섯");
+		strcpy(enemy1.info, "간단하게 캘 수 있다");
+
+		enemy2.att = 15;
+		enemy2.hp = 150;
+		enemy2.dead = FALSE;
+		enemy2.money = 150;
+		strcpy(enemy2.name, "중간버섯");
+		strcpy(enemy2.info, "살짝 캐기 버겁다");
+		break;
 	}
 }
 
@@ -110,12 +136,7 @@ void Render()
 
 	char string[100] = { 0 };
 
-	for (int i = 0; i < WIDTH; i++) ScreenPrint(ui.position.x, ui.position.y + i, "┃");
-	for (int i = 1; i < HEIGHT; i++) { 
-		ScreenPrint(ui.position.x + i, 9, "━"); 
-		ScreenPrint(ui.position.x + i, 13, "━"); 
-		ScreenPrint(ui.position.x + i, 16, "━");
-	}
+	
 
 	if (player.dead == FALSE)
 	{
@@ -132,44 +153,15 @@ void Render()
 		SetColor(WHITE);
 	}
 
-	
+	/* 맵 불러오기 */
+	MapInit(map_pointer);
 
-	for (int y = 0; y < WIDTH; y++)
-		for (int x = 0; x < HEIGHT; x++)
-		{
-			if (map[y][x] == WALL) ScreenPrint(x * 2, y, "■");
-			if (map[y][x] == PORTAL) { SetColor(BLUE); ScreenPrint(x * 2, y, "▩"); SetColor(WHITE);}
-			if (map[y][x] == OBSTACLE) { SetColor(D_RED); ScreenPrint(x * 2, y, "★"); SetColor(WHITE);	}
-			if (map[y][x] == ENEMY1)
-			{
-				SetColor(D_GREEN);
-				if (enemy1.dead == FALSE)
-				{
-					enemy1.position.x = x * 2;
-					enemy1.position.y = y;
-					ScreenPrint(enemy1.position.x, enemy1.position.y, "♣");
-					if (player.collide.x == enemy1.position.x && player.collide.y == enemy1.position.y) EnemyTargetChange(&enemy1);
-				}
-				SetColor(WHITE);
-			}
-			if (map[y][x] == ENEMY2)
-			{
-				SetColor(D_GREEN);
-				if (enemy2.dead == FALSE)
-				{
-					enemy2.position.x = x * 2;
-					enemy2.position.y = y;
-					ScreenPrint(enemy2.position.x, enemy2.position.y, "♣");
-					if (player.collide.x == enemy2.position.x && player.collide.y == enemy2.position.y) EnemyTargetChange(&enemy2);	
-				}
-				SetColor(WHITE);
-			}
-		}
-
-
+	/* 미사일 인터페이스 */
+	ScreenPrint(97, 10, "┏━━━━━┓ ");
 	SetColor(YELLOW);
 	ScreenPrint(100, 11, "☆"); // 100, 11 별 좌표
 	SetColor(WHITE);
+	ScreenPrint(97, 12, "┗━━━━━┛ ");
 
 	if (player.isReady == NOW_ATTACKING)
 	{
@@ -180,16 +172,24 @@ void Render()
 		SetColor(WHITE);
 	}
 
-	ScreenPrint(97, 10, "┏━━━━━┓ ");
-	//ScreenPrint(98, 11, "┃ ");
+	
 
-	//ScreenPrint(102, 11, "┃ ");
-	ScreenPrint(97, 12, "┗━━━━━┛ ");
+
+
+	/* UI 상태창 셋팅 */
+	for (int i = 0; i < WIDTH; i++) ScreenPrint(ui.position.x, ui.position.y + i, "┃");
+	for (int i = 1; i < HEIGHT; i++) {
+		ScreenPrint(ui.position.x + i, 9, "━");
+		ScreenPrint(ui.position.x + i, 13, "━");
+		ScreenPrint(ui.position.x + i, 16, "━");
+	}
 
 	sprintf(string, "이동 좌표 : %d, %d", player.collide.x, player.collide.y);
 	ScreenPrint(83, 1, string);
 	sprintf(string, "보유 돈 : %d원", ui.Money);
 	ScreenPrint(83, 2, string);
+	sprintf(string, "확인용 : %d", ui.CollideEnemy);
+	ScreenPrint(83, 3, string);
 
 	sprintf(string, "내 체력\t%.1lf", ui.MyHP);
 	ScreenPrint(83, 4, string);
@@ -203,6 +203,11 @@ void Render()
 	if (ui.Danger == TRUE)
 	{
 		ScreenPrint(83, 14, "장애물에 닿고 있어요. 조심하세요!");
+	}
+	else if (ui.CollideEnemy == TRUE)
+	{
+		ScreenPrint(83, 14, enemy_target->name);
+		ScreenPrint(83, 15, enemy_target->info);
 	}
 	else if (ui.Notice == TRUE)
 	{
@@ -271,4 +276,44 @@ int GetKeyEvent()
 		return _getch();	//읽은 문자 반환
 
 	return -1;
+}
+
+void MapInit(int(* map)[HEIGHT])
+{
+	for (int y = 0; y < WIDTH; y++)
+		for (int x = 0; x < HEIGHT; x++)
+		{
+			if (map[y][x] == WALL) ScreenPrint(x * 2, y, "■");
+			if (map[y][x] == PORTAL) 
+			{ 
+
+				SetColor(BLUE); ScreenPrint(x * 2, y, "▩"); SetColor(WHITE);
+				if (player.collide.x == enemy1.position.x && player.collide.y == enemy1.position.y) EnemyTargetChange(&enemy1);
+			}
+			if (map[y][x] == OBSTACLE) { SetColor(D_RED); ScreenPrint(x * 2, y, "★"); SetColor(WHITE); }
+			if (map[y][x] == ENEMY1)
+			{
+				SetColor(D_GREEN);
+				if (enemy1.dead == FALSE)
+				{
+					enemy1.position.x = x * 2;
+					enemy1.position.y = y;
+					ScreenPrint(enemy1.position.x, enemy1.position.y, "♣");
+					if (player.collide.x == enemy1.position.x && player.collide.y == enemy1.position.y) EnemyTargetChange(&enemy1);
+				}
+				SetColor(WHITE);
+			}
+			if (map[y][x] == ENEMY2)
+			{
+				SetColor(D_GREEN);
+				if (enemy2.dead == FALSE)
+				{
+					enemy2.position.x = x * 2;
+					enemy2.position.y = y;
+					ScreenPrint(enemy2.position.x, enemy2.position.y, "♣");
+					if (player.collide.x == enemy2.position.x && player.collide.y == enemy2.position.y) EnemyTargetChange(&enemy2);
+				}
+				SetColor(WHITE);
+			}
+		}
 }

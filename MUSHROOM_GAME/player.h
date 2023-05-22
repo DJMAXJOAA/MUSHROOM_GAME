@@ -45,8 +45,9 @@ void PlayerMove();							// 캐릭터 움직임 (공격중일때 못움직임)
 void PlayerCollide();						// 캐릭터와 타 오브젝트 충돌판정(중앙)
 void EnemyTargetChange(EnemyDefault *p);	// 캐릭과 적과 닿으면 적으로 타겟 고정
 void PlayerAttack();						// 캐릭터 공격
-int WallCheck(int x, int y);				// 캐릭터 벽 판정 체크
+int WallCheck(int x, int y, int(*map)[HEIGHT]);	// 캐릭터 벽 판정 체크
 int ObstacleCheck();						// 캐릭터 장애물 판정 체크
+void PortalCheck();
 void AttackTiming();						// 캐릭터 공격시 타이밍 미사일 이동관련
 void MissileTargetChange(Missile* p);		// 판정선 근처에서 미사일의 참조를 바꿔준다
 void MissileInit();							// 미사일 초기화
@@ -59,7 +60,7 @@ void PlayerMove()
 	else
 	{
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000 && player.position.x > 0 && 
-			WallCheck(-4, 1) && WallCheck(-4, 0) && WallCheck(-4, -1)) { //왼쪽
+			WallCheck(-4, 1, map_pointer) && WallCheck(-4, 0, map_pointer) && WallCheck(-4, -1, map_pointer)) { //왼쪽
 			player.position.x--;
 			player.position.x--;
 			sprintf(player.strPlayer1, "　△　");
@@ -68,7 +69,7 @@ void PlayerMove()
 		}
 
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && player.position.x < 75 &&
-			WallCheck(4, 1) && WallCheck(4, 0) && WallCheck(4, -1)) { //오른쪽
+			WallCheck(4, 1, map_pointer) && WallCheck(4, 0, map_pointer) && WallCheck(4, -1, map_pointer)) { //오른쪽
 			player.position.x++;
 			player.position.x++;
 			sprintf(player.strPlayer1, "　△　");
@@ -77,7 +78,7 @@ void PlayerMove()
 		}
 
 		if (GetAsyncKeyState(VK_UP) & 0x8000 && player.position.y > 0 &&
-			WallCheck(-2, -2) && WallCheck(0, -2) && WallCheck(2, -2)) { //위
+			WallCheck(-2, -2, map_pointer) && WallCheck(0, -2, map_pointer) && WallCheck(2, -2, map_pointer)) { //위
 			player.position.y--;
 			sprintf(player.strPlayer1, "　▲　");
 			sprintf(player.strPlayer2, "◁▣▷");
@@ -85,7 +86,7 @@ void PlayerMove()
 		}
 
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000 && player.position.y < 35 &&
-			WallCheck(-2, 2) && WallCheck(0, 2) && WallCheck(2, 2)) { //아래
+			WallCheck(-2, 2, map_pointer) && WallCheck(0, 2, map_pointer) && WallCheck(2, 2, map_pointer)) { //아래
 			player.position.y++;
 			sprintf(player.strPlayer1, "　△　");
 			sprintf(player.strPlayer2, "◁▣▷");
@@ -103,8 +104,14 @@ void PlayerCollide()
 
 void EnemyTargetChange(EnemyDefault *p)
 {
+	if (enemy_target->att <= 0)	// 처음에만 적 정보 뜨게
+	{
+		ui.CollideEnemy = TRUE;
+	}
 	enemy_target = p;
 	ui.Notice = FALSE;	// 돈 얼마 알림 끄기
+
+
 }
 
 void PlayerAttack()
@@ -130,8 +137,9 @@ void PlayerAttack()
 
 	if (player.isReady == CAN_ATTACK && GetAsyncKeyState(0x41) & 0x8000)
 	{
-		player.isReady = NOW_ATTACKING;
+		ui.CollideEnemy = FALSE;
 		ui.second = 0;
+		player.isReady = NOW_ATTACKING;
 	}
 
 	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && ui.second == 0)
@@ -197,7 +205,7 @@ void PlayerAttack()
 }
 
 
-int WallCheck(int x, int y)
+int WallCheck(int x, int y, int(*map)[HEIGHT])
 {
 	if (map[player.collide.y + y][(player.collide.x + x) / 2] == WALL)
 	{
@@ -212,16 +220,21 @@ int WallCheck(int x, int y)
 
 int ObstacleCheck()
 {
-	if (WallCheck(-2, -1) == 2) return 1;
-	if (WallCheck(0, -1) == 2) return 1;
-	if (WallCheck(2, -1) == 2) return 1;
-	if (WallCheck(2, 0) == 2) return 1;
-	if (WallCheck(2, 1) == 2) return 1;
-	if (WallCheck(0, 1) == 2) return 1;
-	if (WallCheck(-2, 1) == 2) return 1;
-	if (WallCheck(-2, 0) == 2) return 1;
-	if (WallCheck(0, 0) == 2) return 1;
+	if (WallCheck(-2, -1, map_pointer) == 2) return 1;
+	if (WallCheck(0, -1, map_pointer) == 2) return 1;
+	if (WallCheck(2, -1, map_pointer) == 2) return 1;
+	if (WallCheck(2, 0, map_pointer) == 2) return 1;
+	if (WallCheck(2, 1, map_pointer) == 2) return 1;
+	if (WallCheck(0, 1, map_pointer) == 2) return 1;
+	if (WallCheck(-2, 1, map_pointer) == 2) return 1;
+	if (WallCheck(-2, 0, map_pointer) == 2) return 1;
+	if (WallCheck(0, 0, map_pointer) == 2) return 1;
 	return 0;
+}
+
+void PortalCheck()
+{
+
 }
 
 void AttackTiming()
