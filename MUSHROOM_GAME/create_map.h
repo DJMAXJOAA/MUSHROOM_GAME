@@ -5,6 +5,8 @@ void PrintTxtFile(int value, FILE* fp);
 void CreateMap();
 // 맵 가내수공업 제작
 
+
+
 void PrintTxtFile(int value, FILE* fp)
 {
 	FILE* point = fp;

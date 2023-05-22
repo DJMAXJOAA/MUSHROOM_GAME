@@ -7,26 +7,29 @@ int main()
 	system("mode con:cols=121 lines=32");
 	system("MUSHROOM GAME");
 	CreateMap();
-	
+
+	ConstInit();
 	ScreenInit();
+	Init();
 	StageInit(stage_number);
-	Init();		// 초기화
+			// 초기화
 
 
 	/*===========시작(q종료)============*/
 	while (1)
 	{
 		int nKey = GetKeyEvent();
-		if (nKey == 'q')
+		if (nKey == 'q' || nKey == 'Q')
 			break;
-		if (nKey == 'r')
+		if (nKey == 'r' || nKey == 'R')
 		{
 			Init();
-			StageInit(1);
+			StageInit(stage_number);
 		}
 			
-
-		if (player.dead == FALSE)
+		Player_HPbar();
+		Enemy_HPbar();
+		if (player.dead == FALSE && player.shop == FALSE)
 		{
 			PlayerCollide();
 			PlayerMove();
@@ -38,7 +41,7 @@ int main()
 
 		Render();	//화면 출력
 		WaitRender(clock());
-		Update();	//죽음 체크
+		PlayerDead();	//죽음 체크
 	}
 
 	/*===========종료============*/

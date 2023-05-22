@@ -22,6 +22,7 @@ typedef struct Player
 	int isReady;
 	int nLength;	    // 캐릭터의 길이
 	int dead;
+	int shop;
 }Player;
 
 typedef struct Missile
@@ -47,7 +48,7 @@ void EnemyTargetChange(EnemyDefault *p);	// 캐릭과 적과 닿으면 적으로 타겟 고정
 void PlayerAttack();						// 캐릭터 공격
 int WallCheck(int x, int y, int(*map)[HEIGHT]);	// 캐릭터 벽 판정 체크
 int ObstacleCheck();						// 캐릭터 장애물 판정 체크
-void PortalCheck();
+void PortalCheck(Portal* p);
 void AttackTiming();						// 캐릭터 공격시 타이밍 미사일 이동관련
 void MissileTargetChange(Missile* p);		// 판정선 근처에서 미사일의 참조를 바꿔준다
 void MissileInit();							// 미사일 초기화
@@ -104,14 +105,16 @@ void PlayerCollide()
 
 void EnemyTargetChange(EnemyDefault *p)
 {
-	if (enemy_target->att <= 0)	// 처음에만 적 정보 뜨게
+	enemy_target = p;
+	if (enemy_target != enemy_target_new)	// 처음에만 적 정보 뜨게
 	{
+		enemy_target = p;
+		enemy_target_new = p;
+		InitUI();
 		ui.CollideEnemy = TRUE;
 	}
-	enemy_target = p;
 	ui.Notice = FALSE;	// 돈 얼마 알림 끄기
-
-
+	
 }
 
 void PlayerAttack()
@@ -173,6 +176,7 @@ void PlayerAttack()
 				p_ui->EnemyHP = 0;
 				p_ui->EnemyAtt = 0;
 				enemy_target = &enemy;		// 적 죽이고 초기화
+				strcpy(ui.Enemy_HPbar, "□□□□□□□□□□");
 
 				MissileInit();
 
@@ -207,7 +211,7 @@ void PlayerAttack()
 
 int WallCheck(int x, int y, int(*map)[HEIGHT])
 {
-	if (map[player.collide.y + y][(player.collide.x + x) / 2] == WALL)
+	if (map[player.collide.y + y][(player.collide.x + x) / 2] == WALL || map[player.collide.y + y][(player.collide.x + x) / 2] == CLEAR_WALL)
 	{
 		return 0;
 	}
@@ -232,9 +236,9 @@ int ObstacleCheck()
 	return 0;
 }
 
-void PortalCheck()
+void PortalCheck(Portal* p)
 {
-
+	stage_number = p;
 }
 
 void AttackTiming()

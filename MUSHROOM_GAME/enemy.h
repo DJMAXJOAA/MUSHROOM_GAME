@@ -4,11 +4,13 @@
 typedef struct
 {
 	Position position;
+	double maxhp;
 	double hp;
 	double att;
 	double dead;
 	double money;
-	char name[10];
+	char HPbar[10];
+	char name[40];
 	char info[40];
 }EnemyDefault;
 
@@ -17,4 +19,4 @@ EnemyDefault enemy1;
 EnemyDefault enemy2;
 
 EnemyDefault* enemy_target = &enemy;
-
+EnemyDefault* enemy_target_new = &enemy;
