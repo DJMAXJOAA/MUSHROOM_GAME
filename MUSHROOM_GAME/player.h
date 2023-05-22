@@ -2,12 +2,6 @@
 #include "all_include.h"
 #include "UI.h"
 
-#define CANT_ATTACK 0
-#define CAN_ATTACK 1
-#define NOW_ATTACKING 2
-#define ATTACK_COOLDOWN 0.1
-#define RESPAWN_TIME 1
-
 char PLAYER_STR1[] = "　△　";		
 char PLAYER_STR2[] = "◁▣▷";
 char PLAYER_STR3[] = "　▽　";		// 플레이어의 생김새
@@ -44,6 +38,7 @@ Missile missile3;
 
 void PlayerMove();							// 캐릭터 움직임 (공격중일때 못움직임)
 void PlayerCollide();						// 캐릭터와 타 오브젝트 충돌판정(중앙)
+void PlayerDead();				// 죽었을때 살리고 초기화시킴
 void EnemyTargetChange(EnemyDefault *p);	// 캐릭과 적과 닿으면 적으로 타겟 고정
 void PlayerAttack();						// 캐릭터 공격
 int WallCheck(int x, int y, int(*map)[HEIGHT]);	// 캐릭터 벽 판정 체크
@@ -103,6 +98,24 @@ void PlayerCollide()
 	player.collide.y = player.position.y + 1;
 }
 
+void PlayerDead()
+{
+	if (ui.MyHP <= 0 && player.dead == FALSE)
+	{
+		ui.MyHP = 0;
+		player.dead = TRUE;
+		ui.respawn += RESPAWN_TIME;
+	}
+	if (ui.respawn <= 0 && player.dead == TRUE)
+	{
+		ui.MyHP = ui.MyMaxHP;
+		SetColor(WHITE);
+		stage_number = 1;
+		Init();
+		StageInit(stage_number);
+	}
+}
+
 void EnemyTargetChange(EnemyDefault *p)
 {
 	enemy_target = p;
@@ -110,10 +123,10 @@ void EnemyTargetChange(EnemyDefault *p)
 	{
 		enemy_target = p;
 		enemy_target_new = p;
-		InitUI();
-		ui.CollideEnemy = TRUE;
+		InitNotice();
+		notice.CollideEnemy = TRUE;
 	}
-	ui.Notice = FALSE;	// 돈 얼마 알림 끄기
+	notice.GetMoney = FALSE;	// 돈 얼마 알림 끄기
 	
 }
 
@@ -140,7 +153,7 @@ void PlayerAttack()
 
 	if (player.isReady == CAN_ATTACK && GetAsyncKeyState(0x41) & 0x8000)
 	{
-		ui.CollideEnemy = FALSE;
+		notice.CollideEnemy = FALSE;
 		ui.second = 0;
 		player.isReady = NOW_ATTACKING;
 	}
@@ -153,21 +166,21 @@ void PlayerAttack()
 			{
 				temp = p_ui->MyAtt;
 				p_ui->MyAtt *= 1.5;
-				ui.Damaged = FALSE;
-				ui.HitEnemy = FALSE;
-				ui.Critical += 1;
+				notice.Damaged = FALSE;
+				notice.HitEnemy = FALSE;
+				notice.Critical += 1;
 			}
 			else
 			{
-				ui.Damaged = FALSE;
-				ui.HitEnemy = TRUE;
-				ui.Critical = 0;
+				notice.Damaged = FALSE;
+				notice.HitEnemy = TRUE;
+				notice.Critical = 0;
 			}
 
 			if (p_ui->MyAtt >= enemy_target->hp)	// 1. 적이 내공격에 죽는피일때
 			{
-				ui.Notice = TRUE;		// 돈 얼마먹었는지 알림
-				ui.temp_money = enemy_target->money;
+				notice.GetMoney = TRUE;		// 돈 얼마먹었는지 알림
+				notice.temp_money = enemy_target->money;
 				ui.Money += enemy_target->money;	// 돈먹고
 				p_ui->MyAtt = temp;		// 크리티컬 데미지 초기화
 
@@ -180,9 +193,9 @@ void PlayerAttack()
 
 				MissileInit();
 
-				ui.Damaged = FALSE;
-				ui.HitEnemy = FALSE;
-				ui.Critical = 0;
+				notice.Damaged = FALSE;
+				notice.HitEnemy = FALSE;
+				notice.Critical = 0;
 
 				player.isReady = CANT_ATTACK;
 			}
@@ -201,9 +214,9 @@ void PlayerAttack()
 			missile->x = 82;
 			missile->extinct = TRUE;
 			Attack_CoolDown();
-			ui.Damaged = TRUE;
-			ui.HitEnemy = FALSE;
-			ui.Critical = 0;
+			notice.Damaged = TRUE;
+			notice.HitEnemy = FALSE;
+			notice.Critical = 0;
 		}
 	}
 }
@@ -260,9 +273,9 @@ void AttackTiming()
 		missile1.x = 82;
 		missile1.extinct = TRUE;
 		Attack_CoolDown();
-		ui.Damaged = TRUE;
-		ui.HitEnemy = FALSE;
-		ui.Critical = 0;
+		notice.Damaged = TRUE;
+		notice.HitEnemy = FALSE;
+		notice.Critical = 0;
 	}
 
 	if (missile1.interval <= 0)
@@ -279,9 +292,9 @@ void AttackTiming()
 		missile2.x = 82;
 		missile2.extinct = TRUE;
 		Attack_CoolDown();
-		ui.Damaged = TRUE;
-		ui.HitEnemy = FALSE;
-		ui.Critical = 0;
+		notice.Damaged = TRUE;
+		notice.HitEnemy = FALSE;
+		notice.Critical = 0;
 	}
 
 	if (missile2.interval <= 0)
@@ -297,9 +310,9 @@ void AttackTiming()
 		Attack_CoolDown();
 		player.isReady = CAN_ATTACK;
 		MissileInit();
-		ui.Damaged = TRUE;
-		ui.HitEnemy = FALSE;
-		ui.Critical = 0;
+		notice.Damaged = TRUE;
+		notice.HitEnemy = FALSE;
+		notice.Critical = 0;
 	}
 	if (missile3.extinct == TRUE)
 	{

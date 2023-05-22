@@ -8,11 +8,10 @@ int main()
 	system("MUSHROOM GAME");
 	CreateMap();
 
-	ConstInit();
 	ScreenInit();
 	Init();
 	StageInit(stage_number);
-			// 초기화
+	ConstInit(); // 초기화
 
 
 	/*===========시작(q종료)============*/
@@ -36,8 +35,8 @@ int main()
 			PlayerAttack();
 			AttackTiming();
 		}
-
-
+		if (player.shop == TRUE) ShopSelect();
+	
 
 		Render();	//화면 출력
 		WaitRender(clock());

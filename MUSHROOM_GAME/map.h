@@ -1,31 +1,6 @@
 #pragma once
 #include "all_include.h"
 
-#define WIDTH 32
-#define HEIGHT 40
-
-#define EMPTY 0
-#define WALL 1
-#define FOREST 2
-#define CLEAR_WALL 3
-#define OBSTACLE 9
-
-#define NPC1 71
-#define NPC2 72
-
-#define PORTAL1 81
-#define PORTAL2 82
-#define PORTAL3 83
-#define PORTAL4 84
-
-#define ENEMY1 91
-#define ENEMY2 92
-#define ENEMY3 93
-
-#define OBSTACLE_DAMAGE 1
-
-int stage_number = 3;
-
 typedef struct Position
 {
 	int x, y;	        //ÁÂÇ¥ ¼³Á¤
