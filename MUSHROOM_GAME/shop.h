@@ -36,6 +36,7 @@ void ShopSelect()
 			}
 			else
 			{
+				ui.Money -= 200;
 				RouletteInit();
 				stage = ROULETTE;
 			}
@@ -119,11 +120,7 @@ void RouletteInit()
 	shop.rank = 5;
 	for (int i = 0; i < shop.count_lange; i++)
 	{
-		shop.arr[i] = random(i, 100);
-		for (int j = 0; j < i; j++)
-		{
-			if (shop.arr[i] == shop.arr[j]) i--;
-		}
+		shop.arr[i] = random(i, 100-i)-i;
 	}
 }
 

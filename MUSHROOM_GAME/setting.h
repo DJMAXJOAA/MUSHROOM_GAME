@@ -221,12 +221,12 @@ int WaitRender(clock_t OldTime)
 						shop.count_lange -= 1;
 						shop.count = 2;
 					}
-					else if (shop.count_lange <= 20 && shop.count_lange > 10)
+					else if (shop.count_lange <= 20 && shop.count_lange > 8)
 					{
 						shop.count_lange -= 1;
 						shop.count = 5;
 					}
-					else if (shop.count_lange <= 10)
+					else if (shop.count_lange <= 8)
 					{
 						shop.count_lange -= 1;
 						shop.count = 10;
