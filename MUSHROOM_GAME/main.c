@@ -2,45 +2,40 @@
 #include "setting.h"
 #include "create_map.h"
 
+
 int main()
 {
 	system("mode con:cols=121 lines=32");
 	system("MUSHROOM GAME");
 	CreateMap();
-
+	
 	ScreenInit();
 	Init();
-	StageInit(stage_number);
-	ConstInit(); // 초기화
-
+	StageInit(stage);
+	ConstInit();		// 초기화
+	
 
 	/*===========시작(q종료)============*/
 	while (1)
 	{
 		int nKey = GetKeyEvent();
-		if (nKey == 'q' || nKey == 'Q')
-			break;
-		if (nKey == 'r' || nKey == 'R')
-		{
-			Init();
-			StageInit(stage_number);
-		}
+		if (nKey == 'q' || nKey == 'Q') break;		// 강종
+		if (nKey == 'r' || nKey == 'R') { Init(); StageInit(stage);} // 리셋
 			
 		Player_HPbar();
 		Enemy_HPbar();
-		if (player.dead == FALSE && player.shop == FALSE)
+		if (player.state == ALIVE)
 		{
 			PlayerCollide();
 			PlayerMove();
 			PlayerAttack();
 			AttackTiming();
 		}
-		if (player.shop == TRUE) ShopSelect();
 	
-
 		Render();	//화면 출력
-		WaitRender(clock());
 		PlayerDead();	//죽음 체크
+
+		WaitRender(clock());
 	}
 
 	/*===========종료============*/

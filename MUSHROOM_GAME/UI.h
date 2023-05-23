@@ -12,11 +12,10 @@ typedef struct UI
 	double MyAtt;
 	double EnemyHP;
 	double EnemyAtt;
-	double second;
 	double respawn;
 	char Player_HPbar[30];
 	char Enemy_HPbar[30];
-
+	int state;	// 장비창, 인벤창, 아이템사용창
 }UI;
 
 typedef struct Notice
@@ -30,19 +29,20 @@ typedef struct Notice
 	int CollideEnemy;
 }Notice;
 
-typedef struct SHOP
+typedef struct Inventory
 {
-	int select;
-}SHOP;
-
+	Item* info;
+	int size;
+}Inventory;
 
 UI ui;
 UI* p_ui = &ui;
 Notice notice;
-SHOP shop;
-
+Inventory inventory[11];
 
 void InitNotice();	// ui 알림창 초기화
+void Player_HPbar(); // 플레이어 체력바
+void Enemy_HPbar(); // 몬스터 체력바
 void ShopSelect();	// 상점 선택
 
 void InitNotice()
@@ -54,6 +54,7 @@ void InitNotice()
 	notice.Danger = FALSE;
 	notice.CollideEnemy = FALSE;
 }
+
 
 void Player_HPbar()
 {
@@ -85,59 +86,3 @@ void Enemy_HPbar()
 	if (enemy_target->hp / enemy_target->maxhp <= 0) strcpy(ui.Enemy_HPbar, "□□□□□□□□□□");
 }
 
-void ShopSelect()
-{
-	int x = 0;
-	if (GetAsyncKeyState(VK_RETURN) & 0x8000 && x == 0)
-	{
-		if (shop.select == 2)
-		{
-			stage_number = 2;
-			Init();
-			StageInit(stage_number);	// 닿으면 초기화
-		}
-		if (shop.select == 3 && x == 0)
-		{
-			x = 1;
-			stage_number = 1;
-			Init();
-			StageInit(stage_number);	// 닿으면 초기화
-		}
-	}
-
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000 && ui.second <= 0)
-	{
-		if (shop.select == 2) shop.select = 1;
-		else if (shop.select == 5) shop.select = 4;
-		else if (shop.select == 7) shop.select = 6;
-		ui.second = 0.1;
-	}
-
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && ui.second <= 0)
-	{
-		if (shop.select == 1) shop.select = 2;
-		else if (shop.select == 4) shop.select = 5;
-		else if (shop.select == 6) shop.select = 7;
-		ui.second = 0.1;
-	}
-	
-	if (GetAsyncKeyState(VK_UP) & 0x8000 && ui.second <= 0)
-	{
-		if (shop.select == 3) shop.select = 1;
-		else if (shop.select == 4) shop.select = 3;
-		else if (shop.select == 6) shop.select = 4;
-		else if (shop.select == 7) shop.select = 5;
-		ui.second = 0.1;
-	}
-
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000 && ui.second <= 0)
-	{
-		if (shop.select == 1) shop.select = 3;
-		else if (shop.select == 3) shop.select = 4;
-		else if (shop.select == 4) shop.select = 6;
-		else if (shop.select == 5) shop.select = 7;
-		ui.second = 0.1;
-	}
-
-
-}

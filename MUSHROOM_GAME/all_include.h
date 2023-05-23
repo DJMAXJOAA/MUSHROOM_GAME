@@ -37,29 +37,41 @@
 #define ENEMY1 91
 #define ENEMY2 92
 #define ENEMY3 93
-
 #define OBSTACLE_DAMAGE 1
 
-int stage_number = 3;	// 시작 맵 설정
 
+enum map_name
+{
+	TITLE, TOWN, REGION1, SHOP1, SHOP2, ROULETTE, END = 99
+};
 
-enum
+enum color
 {
 	BLACK, D_BLACK, D_GREEN, D_SKYBLUE, D_RED, D_VIOLET, D_YELLOW,
 	GRAY, D_GRAY, BLUE, GREEN, SKYBLUE, RED, VIOLET, YELLOW, WHITE
 };
 
+int stage = 0;	// 시작 맵 설정
+double second = 0;			// 클락 시간 초
+
+double random_double(int range_min, int range_max);		//랜덤함수 범위지정 실수
+int random(int range_min, int range_max);				//랜덤함수 범위지정
+void PrintScreen(double x, double y, char* string);		// 문자열 출력
+void SetColor(unsigned short color);					// 색 설정
+void FilePrintStr(char* input_str, int x, int y);		// 텍스트 파일 가져와서 화면 출력하기
 
 
-double random(int range_min, int range_max);	//랜덤함수 범위지정
-void PrintScreen(double x, double y, char* string);	// 문자열 출력
-void SetColor(unsigned short color);	// 색 설정
-
-
-double random(int range_min, int range_max)
+double random_double(int range_min, int range_max)
 {
 	srand((unsigned int)time(NULL));
 	double random = rand() % (range_max - range_min + 1) + range_min;
+	return random;
+}
+
+int random(int range_min, int range_max)
+{
+	srand((unsigned int)time(NULL));
+	int random = rand() % (range_max - range_min + 1) + range_min;
 	return random;
 }
 
@@ -77,3 +89,21 @@ void SetColor(unsigned short color) // 15가지 색상
 	SetConsoleTextAttribute(g_hScreen[g_nScreenIndex], color);
 }
 
+void FilePrintStr(char* input_str, int x, int y)
+{
+	char str[200];
+	FILE* fp = fopen(input_str, "rt");
+	if (fp == NULL) return;
+	int i = 0;
+	while (1)
+	{
+		char* pstr = fgets(str, 200, fp);
+		if (pstr == NULL)
+		{
+			break;
+		}
+		PrintScreen(x, y + i, str);
+		i++;
+	}
+	fclose(fp);
+}

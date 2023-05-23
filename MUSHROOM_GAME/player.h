@@ -1,22 +1,28 @@
 #pragma once
 #include "all_include.h"
-#include "UI.h"
+#include "ui.h"
 
 char PLAYER_STR1[] = "　△　";		
 char PLAYER_STR2[] = "◁▣▷";
 char PLAYER_STR3[] = "　▽　";		// 플레이어의 생김새
 
+enum
+{
+	ALIVE, DEAD, DISAPPEAR, INVENTORY
+	// 0 살아있음, 1 죽음, 2 캐릭터 안보여야하는 상태(타이틀, 상점..), 3 인벤토리창(못움직임)
+};
+
 typedef struct Player
 {
 	Position position;
 	Position_collide collide;
+	char name[10];
 	char* strPlayer1;	// 캐릭터를 포인터 설정(동적 할당)
 	char* strPlayer2;
 	char* strPlayer3;
 	int isReady;
 	int nLength;	    // 캐릭터의 길이
-	int dead;
-	int shop;
+	int state;
 }Player;
 
 typedef struct Missile
@@ -100,19 +106,19 @@ void PlayerCollide()
 
 void PlayerDead()
 {
-	if (ui.MyHP <= 0 && player.dead == FALSE)
+	if (ui.MyHP <= 0 && player.state == ALIVE)
 	{
 		ui.MyHP = 0;
-		player.dead = TRUE;
+		player.state = DEAD;
 		ui.respawn += RESPAWN_TIME;
 	}
-	if (ui.respawn <= 0 && player.dead == TRUE)
+	if (ui.respawn <= 0 && player.state == DEAD)
 	{
 		ui.MyHP = ui.MyMaxHP;
 		SetColor(WHITE);
-		stage_number = 1;
+		stage = TOWN;
 		Init();
-		StageInit(stage_number);
+		StageInit(stage);
 	}
 }
 
@@ -154,11 +160,11 @@ void PlayerAttack()
 	if (player.isReady == CAN_ATTACK && GetAsyncKeyState(0x41) & 0x8000)
 	{
 		notice.CollideEnemy = FALSE;
-		ui.second = 0;
+		second = 0;
 		player.isReady = NOW_ATTACKING;
 	}
 
-	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && ui.second == 0)
+	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && second == 0)
 	{
 		if (missile->x >= 98 && missile->x <= 102)	// 공격 타이밍 맞으면
 		{
@@ -206,7 +212,7 @@ void PlayerAttack()
 				missile->x = 82;
 				enemy_target->hp -= p_ui->MyAtt;
 				p_ui->MyAtt = temp;		// 크리티컬 데미지 초기화
-				ui.second = ATTACK_COOLDOWN;
+				second = ATTACK_COOLDOWN;
 			}
 		}
 		else if (missile->x > 90)	// 공격 타이밍 안맞으면 : 내 피가 깎임
@@ -251,7 +257,7 @@ int ObstacleCheck()
 
 void PortalCheck(Portal* p)
 {
-	stage_number = p;
+	stage = p;
 }
 
 void AttackTiming()
@@ -334,9 +340,9 @@ void MissileInit()
 	missile1.extinct = FALSE;
 	missile2.extinct = FALSE;
 	missile3.extinct = FALSE;
-	missile1.interval = random(10, 30);
-	missile2.interval = random(10, 31);
-	missile3.interval = random(10, 32);
+	missile1.interval = random_double(10, 30);
+	missile2.interval = random_double(10, 31);
+	missile3.interval = random_double(10, 32);
 }
 
 void Attack_CoolDown()
@@ -348,6 +354,6 @@ void Attack_CoolDown()
 	else
 	{
 		ui.MyHP -= enemy_target->att;
-		ui.second = ATTACK_COOLDOWN;
+		second = ATTACK_COOLDOWN;
 	}
 }

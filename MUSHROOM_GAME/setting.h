@@ -1,9 +1,9 @@
 ﻿#pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#define CLOCK 20	// 프레임당 밀리초
-#define WORD_SPEED 30
+#define CLOCK 15	// 프레임당 밀리초
+
 #include "all_include.h"
-#include "player.h"
+#include "title.h"
 
 const double fps = CLOCK / (double)1000;
 static char string[100] = { 0 };
@@ -11,22 +11,22 @@ static char string[100] = { 0 };
 /* 초기화 관련 */
 int ConstInit();					// 딱 처음 한번만 초기화(변하지 말아야 할것들)
 int Init();						// 죽었을때 초기화(초기 설정, 변하지 않는 것들)
+
 int StageInit(int stage_number);	// 맵별 초기화(맵별로 다름. 몇번맵?)
 
 /* 실제 동작부 */
 void Render();						// 화면 출력
+
+void MapObject();					// 맵 뒷배경 (사실상 씬)
 void PlayerControl();			// 1. 플레이어 관련 함수
+void MapInit(int(*map)[HEIGHT]);	// 맵 배열 생성(벽, 장애물, 포탈, NPC 등등 생성)
 void TotalUI();					// 2. UI 관련 함수
 
 /* 화면 관련 */
-void WaitRender(clock_t OldTime);	// 화면 지연시간
+int WaitRender(clock_t OldTime);	// 화면 지연시간
 void Release();						// 할당 해제(프로그램 종료)
 int GetKeyEvent();					// 키 입력받기(인벤창, 종료, 리셋 등)
 
-/* 맵 생성 관련 */
-void MapInit(int(*map)[HEIGHT]);	// 맵 배열 생성(벽, 장애물, 포탈, NPC 등등 생성)
-void MapObject();					// 맵 뒷배경 (사실상 씬)
-void FilePrintStr(char *input_str, int x, int y);	// 파일 입출력
 
 int ConstInit()
 {
@@ -44,6 +44,8 @@ int ConstInit()
 
 int Init()
 {
+	second = 0;
+
 	player.nLength = strlen(PLAYER_STR1);
 	player.strPlayer1 = (char*)malloc(sizeof(char) * player.nLength);
 	strcpy(player.strPlayer1, PLAYER_STR1);
@@ -55,8 +57,7 @@ int Init()
 	player.position.x = 2;
 	player.position.y = 17;
 	player.isReady = CANT_ATTACK;
-	player.dead = FALSE;
-	player.shop = FALSE;
+	player.state = ALIVE;
 
 	enemy.att = 0;
 	enemy.maxhp = 0;
@@ -74,27 +75,22 @@ int Init()
 	missile1.x = 82;
 	missile1.y = 11;
 	missile1.speed = 1.5;
-	missile1.interval = random(10, 30);
+	missile1.interval = random_double(10, 30);
 	missile1.extinct = FALSE;
 	missile2.x = 82;
 	missile2.y = 11;
 	missile2.speed = 1.5;
-	missile2.interval = random(11, 30);
+	missile2.interval = random_double(11, 30);
 	missile2.extinct = FALSE;
 	missile3.x = 82;
 	missile3.y = 11;
 	missile3.speed = 1.5;
-	missile3.interval = random(12, 30);
+	missile3.interval = random_double(12, 30);
 	missile3.extinct = FALSE;
-
-	portal1.move_to_where = 1;
-	portal2.move_to_where = 1;
-	portal3.move_to_where = 1;
-	portal4.move_to_where = 1;
 
 	ui.EnemyAtt = 0;
 	ui.EnemyHP = 0;
-	ui.second = 0;
+	
 	InitNotice();
 
 	return 0;
@@ -104,22 +100,24 @@ int StageInit(int stage_number)
 {
 	switch (stage_number)
 	{
-	case 1:	// 마을
+	case TITLE: // 타이틀
+		map_pointer = map0;
+		break;
+
+	case TOWN:	// 마을
 		map_pointer = map1;
 
-		player.shop = FALSE;
 		player.position.x = 2;
 		player.position.y = 17;
 
-
-		portal1.move_to_where = 2;	// 던전으로
-		portal2.move_to_where = 3;	// 상점으로
-		portal3.move_to_where = 4;	// 상점2로
-		portal4.move_to_where = 5;	// 쉼터로
+		portal1.move_to_where = REGION1;	
+		portal2.move_to_where = SHOP1;
+		portal3.move_to_where = SHOP2;	
+		portal4.move_to_where = END;
 
 		break;
 
-	case 2:	// 던전
+	case REGION1:	// 던전
 		map_pointer = map2;
 
 		player.position.x = 4;
@@ -142,17 +140,32 @@ int StageInit(int stage_number)
 		strcpy(enemy2.name, "중간버섯");
 		strcpy(enemy2.info, "살짝 캐기 버겁다");
 
-		portal1.move_to_where = 1;
-		portal2.move_to_where = 6;
+		portal1.move_to_where = TOWN;
+		portal2.move_to_where = END;
 		break;
 
-	case 3:	// 상점 (캐릭 이동불가, 커서)
+	case SHOP1:	// 상점 (캐릭 이동불가, 커서)
 		map_pointer = map3;
 
 		shop.select = 1;
 
 		break;
+
+	case SHOP2:
+		map_pointer = map3;
+
+		break;
+
+	case ROULETTE:
+		map_pointer = map3;
+
+		break;
+	
+	case END:
+		map_pointer = map0;
+		break;
 	}
+
 	return 0;
 }
 
@@ -161,24 +174,30 @@ void Render()
 	ScreenClear();
 	/*─────────────────────────────────────────────────────────────────────*/
 
-	/* 뒷배경 오브젝트 */
+	/* 각 맵마다 오브젝트, 맵 요소 */
+	if (stage == TITLE) TitleSelect();
+	if (stage == SHOP1) ShopSelect();
+	if (stage == END) TitleSelect();
+
 	MapObject();
 
-	/* 캐릭터 + 타이밍UI */
-	PlayerControl();
+	if (stage != TITLE && stage != END)
+	{
+		/* 캐릭터 + 타이밍UI */
+		PlayerControl();
 
-	/* 맵 불러오기 */
-	MapInit(map_pointer);
+		/* 맵 불러오기 (벽, 포탈, 적 등등) */
+		MapInit(map_pointer);
 
-	/* UI 상태창 셋팅 */
-	TotalUI();
-
+		/* UI 상태창 셋팅 */
+		TotalUI();
+	}
 
 	/*─────────────────────────────────────────────────────────────────────*/
 	ScreenFlipping();
 }
 
-void WaitRender(clock_t OldTime)
+int WaitRender(clock_t OldTime)
 {
 	clock_t CurTime;	//clock_t 수행시간 측정
 	while (1)
@@ -186,14 +205,38 @@ void WaitRender(clock_t OldTime)
 		CurTime = clock();
 		if (CurTime - OldTime > CLOCK)
 		{
-			if (ui.second <= fps) ui.second = 0;
-			else if (player.isReady == NOW_ATTACKING) ui.second -= fps;
-			else if (player.shop == TRUE) ui.second -= fps;
-			if (player.dead == TRUE) ui.respawn -= fps;
-			break;
+			if (second <= fps) second = 0;
+			else second -= fps;
+
+			if (player.state == DEAD) ui.respawn -= fps;
+
+			/*if (stage == ROULETTE && shop.count_stop == FALSE)
+			{
+				shop.count--;
+				if (shop.count <= 1)
+				{
+					if (shop.count_lange > 30)
+					{
+						shop.count_lange -= 1;
+						shop.count = 3;
+					}
+					else if (shop.count_lange <= 30 && shop.count_lange > 10)
+					{
+						shop.count_lange -= 1;
+						shop.count = 5;
+					}
+					else if (shop.count_lange <= 10)
+					{
+						shop.count_lange -= 1;
+						shop.count = 10;
+					}
+				}
+			}*/
 		}
+		break;
 	}
 }
+
 
 void Release()	//해제
 {
@@ -225,7 +268,7 @@ void MapInit(int(* map)[HEIGHT])
 				{
 					PortalCheck(portal1.move_to_where);
 					Init();
-					StageInit(stage_number);	// 닿으면 초기화
+					StageInit(stage);	// 닿으면 초기화
 				}
 			}
 			if (map[y][x] == PORTAL2)
@@ -237,7 +280,7 @@ void MapInit(int(* map)[HEIGHT])
 				{
 					PortalCheck(portal2.move_to_where);
 					Init();
-					StageInit(stage_number);	// 닿으면 초기화
+					StageInit(stage);	// 닿으면 초기화
 				}
 			}
 
@@ -249,7 +292,7 @@ void MapInit(int(* map)[HEIGHT])
 				{
 					PortalCheck(portal3.move_to_where);
 					Init();
-					StageInit(stage_number);	// 닿으면 초기화
+					StageInit(stage);	// 닿으면 초기화
 				}
 			}
 
@@ -261,7 +304,7 @@ void MapInit(int(* map)[HEIGHT])
 				{
 					PortalCheck(portal4.move_to_where);
 					Init();
-					StageInit(stage_number);	// 닿으면 초기화
+					StageInit(stage);	// 닿으면 초기화
 				}
 			}
 			
@@ -295,7 +338,19 @@ void MapInit(int(* map)[HEIGHT])
 
 void MapObject()
 {
-	if (stage_number == 1)
+	if (stage == TITLE)
+	{
+		FilePrintStr("title_background.txt", 0, 0);
+
+		SetColor(YELLOW);
+		FilePrintStr("title1.txt", 12, 2);
+		FilePrintStr("title2.txt", 12, 20);
+		SetColor(WHITE);
+
+		PrintScreen(47, 16, "Press enter to START!");
+	}
+
+	if (stage == TOWN)
 	{
 		PrintScreen(58, 22, "무기 랜덤 뽑기");
 		PrintScreen(9, 22, "경품 교환소");
@@ -306,7 +361,6 @@ void MapObject()
 
 		FilePrintStr("road.txt", 1, 16);
 
-		
 		SetColor(GRAY);
 		FilePrintStr("house.txt", 1, 1);
 		SetColor(WHITE);
@@ -321,7 +375,7 @@ void MapObject()
 	}
 
 
-	if (stage_number == 2)
+	if (stage == REGION1)
 	{
 		SetColor(D_GREEN);
 		FilePrintStr("background.txt", 4, 9);
@@ -337,71 +391,69 @@ void MapObject()
 		}
 	}
 
-	if (stage_number == 3)
+	if (stage == SHOP1)
 	{
-		player.shop = TRUE;
+		player.state = DISAPPEAR;
 		SetColor(D_GRAY);
 		FilePrintStr("background_pattern.txt", 1, 1);
 		FilePrintStr("background_pattern.txt", 1, 16);
 		SetColor(WHITE);
 
-		FilePrintStr("shop_border.txt", 4, 2);
+		FilePrintStr("shop_border.txt", 4, 8);
 		
 		SetColor(YELLOW);
-		PrintScreen(28, 4, "※※ 무기 랜덤 뽑기 ※※");
-		PrintScreen(26, 5, "S등급 무기에 도전해 보세요!!");
+		PrintScreen(28, 10, "※※ 무기 랜덤 뽑기 ※※");
+		PrintScreen(26, 11, "S등급 무기에 도전해 보세요!!");
 		SetColor(WHITE);
 		
-		PrintScreen(36, 8, "얻은 무기는 마일리지로 교환 가능합니다.");
-		PrintScreen(45, 9, "마일리지로 경품을 교환하세요!");
+		PrintScreen(36, 14, "얻은 무기는 마일리지로 교환 가능합니다.");
+		PrintScreen(45, 15, "마일리지로 경품을 교환하세요!");
 
 		
-		if (shop.select == 1) PrintScreen(11, 12, "▶"); else PrintScreen(11, 12, "▷");
-		PrintScreen(13, 12, "1회 뽑기 :  200원");
+		if (shop.select == 1) PrintScreen(11, 21, "▶"); else PrintScreen(11, 21, "▷");
+		PrintScreen(13, 21, "1회 뽑기 :  200원");
 
-		if (shop.select == 2) PrintScreen(46, 12, "▶"); else PrintScreen(46, 12, "▷");
-		PrintScreen(48, 12, "5회 뽑기 : 1000원");
+		if (shop.select == 2) PrintScreen(46, 21, "▶"); else PrintScreen(46, 21, "▷");
+		PrintScreen(48, 21, "상점에서 나갑니다");
 
-		if (shop.select == 3) PrintScreen(11, 15, "▶"); else PrintScreen(11, 15, "▷");
-		PrintScreen(13, 15, "상점에서 나갑니다");
-
-		if (shop.select == 4) SetColor(VIOLET); else SetColor(D_VIOLET);
-		FilePrintStr("rankS.txt",7,18);
-	
-		if (shop.select == 5) SetColor(GREEN); else SetColor(D_GREEN);
-		FilePrintStr("rankA.txt",42,18);
-	
-		if (shop.select == 6) SetColor(SKYBLUE); else SetColor(D_SKYBLUE);
-		FilePrintStr("rankB.txt",7,24);
-	
-		if (shop.select == 7) SetColor(WHITE); else SetColor(GRAY);
-		FilePrintStr("rankC.txt",42,24);
+		
 	}
 
-}
-
-void FilePrintStr(char *input_str, int x, int y)
-{
-	char str[100];
-	FILE* fp = fopen(input_str, "rt");
-	if (fp == NULL) return;
-	int i = 0;
-	while (1)
+	if (stage == SHOP2)
 	{
-		char* pstr = fgets(str, 100, fp);
-		if (pstr == NULL)
-		{
-			break;
-		}
-		PrintScreen(x, y + i, str);
-		i++;
+
 	}
-	fclose(fp);
+
+	if (stage == ROULETTE)
+	{
+		SetColor(YELLOW);
+		FilePrintStr("roulette_border.txt", 0, 0);
+
+		SetColor(RED);
+		FilePrintStr("roulette_box.txt", 9, 12);
+
+		RouletteFilePrint();
+		RouletteMove();
+
+		SetColor(WHITE);
+	}
+
+	if (stage == END)
+	{
+		SetColor(YELLOW);
+		FilePrintStr("ending_background1.txt", 0, 5);
+		FilePrintStr("ending_background2.txt", 10, 17);
+		FilePrintStr("ending_background3.txt", 55, 17);
+		PrintScreen(88, 27, "플레이 해주셔서 감사합니다!!");
+		PrintScreen(97, 28, "인하게임개발 최형준");
+		SetColor(WHITE);
+
+	}
 }
 
 void PlayerControl()
 {
-	if (player.dead == FALSE && player.shop == FALSE)
+	if (player.state == ALIVE)
 	{
 		if (player.isReady == NOW_ATTACKING) SetColor(D_GREEN);
 		if (ObstacleCheck()) {
@@ -436,19 +488,23 @@ void PlayerControl()
 
 void TotalUI()
 {
-	for (int i = 0; i < WIDTH; i++) PrintScreen(ui.position.x, ui.position.y + i, "┃");
+	for (int i = 0; i < WIDTH; i++)
+	{
+		PrintScreen(ui.position.x, ui.position.y + i, "┃");
+	}
 	for (int i = 1; i < HEIGHT; i++)
 	{
 		PrintScreen(ui.position.x + i, 9, "━");
 		PrintScreen(ui.position.x + i, 13, "━");
 		PrintScreen(ui.position.x + i, 16, "━");
+		PrintScreen(ui.position.x + i, 28, "…");
 	}
 
 	sprintf(string, "x : %d / y : %d", player.collide.x, player.collide.y);
 	PrintScreen(83, 1, string);
 	sprintf(string, "보유 돈 : %d원", ui.Money);
 	PrintScreen(83, 2, string);
-	sprintf(string, "확인용 스테이지넘버: %d", stage_number);
+	sprintf(string, "확인용 스테이지넘버: %d", stage);
 	PrintScreen(83, 3, string);
 
 	sprintf(string, "%s\t%s", ui.Player_Name, ui.Player_HPbar);
@@ -460,7 +516,7 @@ void TotalUI()
 	sprintf(string, "HP:%.1lf / ATT:%.1lf\t", ui.EnemyHP, ui.EnemyAtt);
 	PrintScreen(83, 7, string);
 
-	if (player.shop == TRUE)	// 무기 상점 안에서의 인터페이스
+	if (player.state == DISAPPEAR)	// 무기 상점 안에서의 인터페이스
 	{
 		if (shop.select == 4)
 		{
@@ -469,12 +525,12 @@ void TotalUI()
 		}
 		else if (shop.select == 5)
 		{
-			PrintScreen(83, 14, "등급A : 15%");
+			PrintScreen(83, 14, "등급A : 10%");
 			PrintScreen(83, 15, "쪼금 특별한 능력이 있습니다.");
 		}
 		else if (shop.select == 6)
 		{
-			PrintScreen(83, 14, "등급B : 30%");
+			PrintScreen(83, 14, "등급B : 35%");
 			PrintScreen(83, 15, "C 무기보다는 살짝 좋습니다.");
 		}
 		else if (shop.select == 7)
@@ -525,7 +581,22 @@ void TotalUI()
 		PrintScreen(83, 15, "타이밍 맞춰서 F키 공격(크리티컬 x1.5)");
 	}
 
-	if (player.dead == TRUE)
+	sprintf(string, "확인용 남은초 : %.2lf", second);
+	PrintScreen(83, 17, string);
+	sprintf(string, "내 상태 : %d", player.state);
+	PrintScreen(83, 18, string);
+	sprintf(string, "count lange : %d", shop.count_lange);
+	PrintScreen(83, 19, string);
+	sprintf(string, "0! : %d", shop.arr[0]);
+	PrintScreen(83, 20, string);
+	sprintf(string, "2! : %d", shop.arr[2]);
+	PrintScreen(83, 22, string);
+	sprintf(string, "4! : %d", shop.arr[4]);
+	PrintScreen(83, 24, string);
+	sprintf(string, "count : %d", shop.count);
+	PrintScreen(83, 25, string);
+
+	if (player.state == DEAD)
 	{
 		PrintScreen(83, 29, "당신은 죽었습니다! 곧 부활합니다");
 		sprintf(string, "남은 리스폰 시간 : %.1lf초", ui.respawn);
