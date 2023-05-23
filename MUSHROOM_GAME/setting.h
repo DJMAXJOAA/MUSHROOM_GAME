@@ -38,7 +38,7 @@ int ConstInit()
 
 	ui.position.x = 80;
 	ui.position.y = 0;
-	
+
 	return 0;
 }
 
@@ -90,7 +90,7 @@ int Init()
 
 	ui.EnemyAtt = 0;
 	ui.EnemyHP = 0;
-	
+
 	InitNotice();
 
 	return 0;
@@ -110,9 +110,9 @@ int StageInit(int stage_number)
 		player.position.x = 2;
 		player.position.y = 17;
 
-		portal1.move_to_where = REGION1;	
+		portal1.move_to_where = REGION1;
 		portal2.move_to_where = SHOP1;
-		portal3.move_to_where = SHOP2;	
+		portal3.move_to_where = SHOP2;
 		portal4.move_to_where = END;
 
 		break;
@@ -148,6 +148,7 @@ int StageInit(int stage_number)
 		map_pointer = map3;
 
 		shop.select = 1;
+		shop.rank = 5;
 
 		break;
 
@@ -160,7 +161,7 @@ int StageInit(int stage_number)
 		map_pointer = map3;
 
 		break;
-	
+
 	case END:
 		map_pointer = map0;
 		break;
@@ -210,17 +211,17 @@ int WaitRender(clock_t OldTime)
 
 			if (player.state == DEAD) ui.respawn -= fps;
 
-			/*if (stage == ROULETTE && shop.count_stop == FALSE)
+			if (stage == ROULETTE && shop.count_stop == FALSE)	// 룰렛
 			{
 				shop.count--;
 				if (shop.count <= 1)
 				{
-					if (shop.count_lange > 30)
+					if (shop.count_lange > 20)
 					{
 						shop.count_lange -= 1;
-						shop.count = 3;
+						shop.count = 2;
 					}
-					else if (shop.count_lange <= 30 && shop.count_lange > 10)
+					else if (shop.count_lange <= 20 && shop.count_lange > 10)
 					{
 						shop.count_lange -= 1;
 						shop.count = 5;
@@ -231,10 +232,12 @@ int WaitRender(clock_t OldTime)
 						shop.count = 10;
 					}
 				}
-			}*/
+			}
+			break;
 		}
-		break;
+
 	}
+	return 0;
 }
 
 
@@ -251,7 +254,7 @@ int GetKeyEvent()
 	return -1;
 }
 
-void MapInit(int(* map)[HEIGHT])
+void MapInit(int(*map)[HEIGHT])
 {
 	for (int y = 0; y < WIDTH; y++)
 		for (int x = 0; x < HEIGHT; x++)
@@ -260,7 +263,7 @@ void MapInit(int(* map)[HEIGHT])
 			if (map[y][x] == OBSTACLE) { SetColor(D_RED); PrintScreen(x * 2, y, "★"); SetColor(WHITE); }
 
 			if (map[y][x] == PORTAL1)
-			{ 
+			{
 				portal1.position.x = x * 2;
 				portal1.position.y = y;
 				SetColor(BLUE); PrintScreen(x * 2, y, "▩"); SetColor(WHITE);
@@ -284,15 +287,14 @@ void MapInit(int(* map)[HEIGHT])
 				}
 			}
 
-			if (map[y][x] == PORTAL3)
+			if (map[y][x] == PORTAL3)	// 잠깐 테스트용으로 돈먹게
 			{
 				portal3.position.x = x * 2;
 				portal3.position.y = y;
+				SetColor(BLUE); PrintScreen(x * 2, y, "▩"); SetColor(WHITE);
 				if (player.collide.x == portal3.position.x && player.collide.y == portal3.position.y)
 				{
-					PortalCheck(portal3.move_to_where);
-					Init();
-					StageInit(stage);	// 닿으면 초기화
+					ui.Money += 10000;
 				}
 			}
 
@@ -307,7 +309,7 @@ void MapInit(int(* map)[HEIGHT])
 					StageInit(stage);	// 닿으면 초기화
 				}
 			}
-			
+
 			if (map[y][x] == ENEMY1)
 			{
 				SetColor(D_GREEN);
@@ -368,8 +370,8 @@ void MapObject()
 		PrintScreen(33, 9, "쉼터");
 		for (int i = 0; i < 7; i++)
 		{
-			PrintScreen(37, 21+i, "|");
-			PrintScreen(45, 21+i, "|");
+			PrintScreen(37, 21 + i, "|");
+			PrintScreen(45, 21 + i, "|");
 		}
 		PrintScreen(46, 27, "--------");
 	}
@@ -400,40 +402,51 @@ void MapObject()
 		SetColor(WHITE);
 
 		FilePrintStr("shop_border.txt", 4, 8);
-		
+
 		SetColor(YELLOW);
 		PrintScreen(28, 10, "※※ 무기 랜덤 뽑기 ※※");
 		PrintScreen(26, 11, "S등급 무기에 도전해 보세요!!");
 		SetColor(WHITE);
-		
+
 		PrintScreen(36, 14, "얻은 무기는 마일리지로 교환 가능합니다.");
 		PrintScreen(45, 15, "마일리지로 경품을 교환하세요!");
 
-		
 		if (shop.select == 1) PrintScreen(11, 21, "▶"); else PrintScreen(11, 21, "▷");
 		PrintScreen(13, 21, "1회 뽑기 :  200원");
 
 		if (shop.select == 2) PrintScreen(46, 21, "▶"); else PrintScreen(46, 21, "▷");
 		PrintScreen(48, 21, "상점에서 나갑니다");
 
-		
-	}
-
-	if (stage == SHOP2)
-	{
-
 	}
 
 	if (stage == ROULETTE)
 	{
-		SetColor(YELLOW);
-		FilePrintStr("roulette_border.txt", 0, 0);
+		if (shop.rank == S)
+		{
+			SetColor(YELLOW);
+			FilePrintStr("roulette_border.txt", 0, 0);
+		}
 
-		SetColor(RED);
-		FilePrintStr("roulette_box.txt", 9, 12);
+		if (shop.count_stop == TRUE)
+		{
+			SetColor(YELLOW);
+			FilePrintStr("roulette_box.txt", 6, 12);
+			SetColor(WHITE);
+			
+			ShopSelect();
+			PrintScreen(53, 14, "등급 아이템 획득!!");
+			PrintScreen(53, 15, "다시 뽑으시겠습니까??");
+
+			if (shop.select == 1) PrintScreen(51, 17, "▶"); else PrintScreen(51, 17, "▷");
+			PrintScreen(53, 17, "다시 뽑기 :  200원");
+
+			if (shop.select == 2) PrintScreen(51, 18, "▶"); else PrintScreen(51, 18, "▷");
+			PrintScreen(53, 18, "상점에서 나갑니다.");
+		}
 
 		RouletteFilePrint();
 		RouletteMove();
+		
 
 		SetColor(WHITE);
 	}
@@ -502,9 +515,9 @@ void TotalUI()
 
 	sprintf(string, "x : %d / y : %d", player.collide.x, player.collide.y);
 	PrintScreen(83, 1, string);
-	sprintf(string, "보유 돈 : %d원", ui.Money);
+	sprintf(string, "보유 돈 : %d", ui.Money);
 	PrintScreen(83, 2, string);
-	sprintf(string, "확인용 스테이지넘버: %d", stage);
+	sprintf(string, "stage number : %d", stage);
 	PrintScreen(83, 3, string);
 
 	sprintf(string, "%s\t%s", ui.Player_Name, ui.Player_HPbar);
@@ -516,24 +529,28 @@ void TotalUI()
 	sprintf(string, "HP:%.1lf / ATT:%.1lf\t", ui.EnemyHP, ui.EnemyAtt);
 	PrintScreen(83, 7, string);
 
-	if (player.state == DISAPPEAR)	// 무기 상점 안에서의 인터페이스
+	if (player.state == DISAPPEAR)	// 상점 안에서의 인터페이스
 	{
-		if (shop.select == 4)
+		if (shop.select == 1 && ui.Money < 200)
+		{
+			PrintScreen(83, 14, "돈이 부족합니다!!");
+		}
+		else if (shop.rank == S)
 		{
 			PrintScreen(83, 14, "등급S : 5%");
 			PrintScreen(83, 15, "확실히 특별한 능력이 있습니다!");
 		}
-		else if (shop.select == 5)
+		else if (shop.rank == A)
 		{
 			PrintScreen(83, 14, "등급A : 10%");
 			PrintScreen(83, 15, "쪼금 특별한 능력이 있습니다.");
 		}
-		else if (shop.select == 6)
+		else if (shop.rank == B)
 		{
 			PrintScreen(83, 14, "등급B : 35%");
 			PrintScreen(83, 15, "C 무기보다는 살짝 좋습니다.");
 		}
-		else if (shop.select == 7)
+		else if (shop.rank == C)
 		{
 			PrintScreen(83, 14, "등급C : 50%");
 			PrintScreen(83, 15, "지극히 평범한 무기입니다.");
@@ -541,7 +558,7 @@ void TotalUI()
 		else
 		{
 			PrintScreen(83, 14, "방향키로 이동, 엔터로 선택");
-			PrintScreen(83, 15, "아래서 확률확인 가능");
+			PrintScreen(83, 15, "S 5%, A 15%, B 30% C 50%");
 		}
 	}
 	else if (notice.Danger == TRUE)	// 장애물에 닿고 있을 때
@@ -585,16 +602,6 @@ void TotalUI()
 	PrintScreen(83, 17, string);
 	sprintf(string, "내 상태 : %d", player.state);
 	PrintScreen(83, 18, string);
-	sprintf(string, "count lange : %d", shop.count_lange);
-	PrintScreen(83, 19, string);
-	sprintf(string, "0! : %d", shop.arr[0]);
-	PrintScreen(83, 20, string);
-	sprintf(string, "2! : %d", shop.arr[2]);
-	PrintScreen(83, 22, string);
-	sprintf(string, "4! : %d", shop.arr[4]);
-	PrintScreen(83, 24, string);
-	sprintf(string, "count : %d", shop.count);
-	PrintScreen(83, 25, string);
 
 	if (player.state == DEAD)
 	{
