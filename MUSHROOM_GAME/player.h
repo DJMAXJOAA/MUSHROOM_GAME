@@ -49,7 +49,7 @@ void EnemyTargetChange(EnemyDefault *p);	// 캐릭과 적과 닿으면 적으로 타겟 고정
 void PlayerAttack();						// 캐릭터 공격
 int WallCheck(int x, int y, int(*map)[HEIGHT]);	// 캐릭터 벽 판정 체크
 int ObstacleCheck();						// 캐릭터 장애물 판정 체크
-void PortalCheck(Portal* p);
+void PortalCheck(Portal* p);				// 캐릭터 포탈 판정 체크
 void AttackTiming();						// 캐릭터 공격시 타이밍 미사일 이동관련
 void MissileTargetChange(Missile* p);		// 판정선 근처에서 미사일의 참조를 바꿔준다
 void MissileInit();							// 미사일 초기화

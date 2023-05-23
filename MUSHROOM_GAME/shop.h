@@ -9,6 +9,7 @@ typedef struct SHOP
 	int count_stop;
 	int rank;
 	int arr[100];
+	int cheat;
 }SHOP;
 
 SHOP shop;
@@ -18,7 +19,6 @@ void ShopSelect();
 void RouletteInit();
 void RouletteMove();
 void RouletteFilePrint();
-void RouletteStart();
 
 void ShopSelect()
 {
@@ -46,9 +46,16 @@ void ShopSelect()
 		{
 			player.state = ALIVE;
 			stage = TOWN;
+			shop.cheat == FALSE;
 			Init();
 			StageInit(stage);
 		}
+	}
+	if (GetAsyncKeyState(0x45) & 0x8000)
+	{
+		shop.cheat = TRUE;
+		RouletteInit();
+		stage = ROULETTE;
 	}
 
 	if (stage == SHOP1)
@@ -118,9 +125,19 @@ void RouletteInit()
 	shop.count = 10;
 	shop.count_stop = FALSE;
 	shop.rank = 5;
-	for (int i = 0; i < shop.count_lange; i++)
+	if (shop.cheat == TRUE)
 	{
-		shop.arr[i] = random(i, 100-i)-i;
+		for (int i = 0; i < shop.count_lange; i++)
+		{
+			shop.arr[i] = 1;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < shop.count_lange; i++)
+		{
+			shop.arr[i] = random(i, 100 - i) - i;
+		}
 	}
 }
 
@@ -150,16 +167,4 @@ void RouletteFilePrint()
 		}
 	}
 	SetColor(WHITE);
-}
-
-void RouletteStart()
-{
-	if (ui.Money < 200)
-	{
-		//돈이 부족합니다! 알림창 출력
-	}
-	else if (inventory->size >= 11)
-	{
-		// 인벤토리 꽉찼습니다! 알림창 출력
-	}
 }

@@ -2,7 +2,6 @@
 #include "shop.h"
 
 void TitleSelect();
-void Ending();
 
 void TitleSelect()
 {
@@ -12,9 +11,4 @@ void TitleSelect()
 		Init();
 		StageInit(stage);
 	}
-}
-
-void Ending()
-{
-
 }
