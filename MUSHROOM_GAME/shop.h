@@ -90,7 +90,7 @@ void ShopSelect()
 
 void RouletteMove()
 {
-	if (shop.count_lange <= 6)
+	if (shop.count_lange <= 6)	// 인벤토리에 추가, 알림 출력
 	{
 		shop.count_lange = 100;
 		shop.count = 0;
@@ -99,6 +99,7 @@ void RouletteMove()
 		if (shop.arr[2] >= 0 && shop.arr[2] < 5)
 		{
 			shop.rank = S;
+			inventory
 		}
 		else if (shop.arr[2] >= 5 && shop.arr[2] < 20)
 		{
@@ -125,6 +126,7 @@ void RouletteInit()
 	shop.count = 10;
 	shop.count_stop = FALSE;
 	shop.rank = 5;
+	
 	if (shop.cheat == TRUE)
 	{
 		for (int i = 0; i < shop.count_lange; i++)
@@ -167,4 +169,9 @@ void RouletteFilePrint()
 		}
 	}
 	SetColor(WHITE);
+}
+
+void InventoryAdd()
+{
+
 }

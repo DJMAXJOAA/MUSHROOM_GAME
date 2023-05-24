@@ -2,9 +2,9 @@
 #include "all_include.h"
 
 /* 아래 3개로 더블 버퍼링을 구현 */
-void ScreenInit();
-void ScreenFlipping();
-void ScreenClear();
+void ScreenInit();		// 화면 초기화
+void ScreenFlipping();	// 더블버퍼링, 2번화면과 1변화면 바꿔서 출력
+void ScreenClear();		// 렌더링 화면을 빈 화면으로 바꿔준다
 void ScreenRelease(); // 게임 종료시 메모리 초기화
 
 static int g_nScreenIndex;

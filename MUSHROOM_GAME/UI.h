@@ -29,16 +29,12 @@ typedef struct Notice
 	int CollideEnemy;
 }Notice;
 
-typedef struct Inventory
-{
-	Item* info;
-	int size;
-}Inventory;
+
 
 UI ui;
 UI* p_ui = &ui;
 Notice notice;
-Inventory inventory[11];
+Inventory inventory[10];
 
 void InitNotice();	// ui 알림창 초기화
 void Player_HPbar(); // 플레이어 체력바
