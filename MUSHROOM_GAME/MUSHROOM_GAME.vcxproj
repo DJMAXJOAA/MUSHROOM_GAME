@@ -127,8 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="all_include.c" />
+    <ClCompile Include="create_map.c" />
+    <ClCompile Include="enemy.c" />
     <ClCompile Include="inventory.c" />
+    <ClCompile Include="Item.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="player.c" />
+    <ClCompile Include="Screen.c" />
+    <ClCompile Include="shop.c" />
+    <ClCompile Include="title.c" />
+    <ClCompile Include="Ui.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="create_map.h">

@@ -21,6 +21,33 @@
     <ClCompile Include="inventory.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Item.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="create_map.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="player.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="shop.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="title.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="all_include.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">

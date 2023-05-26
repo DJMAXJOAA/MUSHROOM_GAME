@@ -18,5 +18,5 @@ EnemyDefault enemy;
 EnemyDefault enemy1;
 EnemyDefault enemy2;
 
-EnemyDefault* enemy_target = &enemy;
-EnemyDefault* enemy_target_new = &enemy;
+EnemyDefault* enemy_target;
+EnemyDefault* enemy_target_new;
