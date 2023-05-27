@@ -10,6 +10,7 @@
 #include <stralign.h>
 #include "Screen.h"
 
+
 /* 캐릭터 관련 */
 #define CANT_ATTACK 0
 #define CAN_ATTACK 1
@@ -53,6 +54,16 @@ enum color
 	BLACK, D_BLACK, D_GREEN, D_SKYBLUE, D_RED, D_VIOLET, D_YELLOW,
 	GRAY, D_GRAY, BLUE, GREEN, SKYBLUE, RED, VIOLET, YELLOW, WHITE
 };
+
+typedef struct Position
+{
+	int x, y;	        //좌표 설정
+}Position;
+
+typedef struct Position_collide
+{
+	int x, y;	        //좌표 설정
+}Position_collide;
 
 double random_double(int range_min, int range_max);		//랜덤함수 범위지정 실수
 int random(int range_min, int range_max);				//랜덤함수 범위지정

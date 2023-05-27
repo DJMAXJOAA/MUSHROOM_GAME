@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include "all_include.h"
 #include "setting.h"
 //#include "create_map.h"
 

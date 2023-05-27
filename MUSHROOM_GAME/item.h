@@ -6,7 +6,7 @@ enum item_rank
 	C, B, A, S	// rank배열 0~3 클수록 높은거
 };
 
-typedef struct
+typedef struct Item
 {
 	char rank;
 	double att;

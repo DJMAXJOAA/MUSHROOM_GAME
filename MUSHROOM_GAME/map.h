@@ -2,16 +2,6 @@
 #include "all_include.h"
 #include "item.h"
 
-typedef struct Position
-{
-	int x, y;	        //ÁÂÇ¥ ¼³Á¤
-}Position;
-
-typedef struct Position_collide
-{
-	int x, y;	        //ÁÂÇ¥ ¼³Á¤
-}Position_collide;
-
 typedef struct Portal
 {
 	Position position;

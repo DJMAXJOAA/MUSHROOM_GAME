@@ -43,3 +43,8 @@ void Enemy_HPbar()
 	if (enemy_target->hp / enemy_target->maxhp <= 0) strcpy(ui.Enemy_HPbar, "¡à¡à¡à¡à¡à¡à¡à¡à¡à¡à");
 }
 
+
+void NoticeUI()
+{
+
+}

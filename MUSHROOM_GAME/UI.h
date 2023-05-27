@@ -29,20 +29,12 @@ typedef struct Notice
 	int CollideEnemy;
 }Notice;
 
-
-typedef struct
-{
-	int Critial;
-
-}Inventory;
-
 UI ui;
 UI* p_ui;
 Notice notice;
-Inventory inventory[10];
 
 void InitNotice();	// ui 알림창 초기화
 void Player_HPbar(); // 플레이어 체력바
 void Enemy_HPbar(); // 몬스터 체력바
 void ShopSelect();	// 상점 선택
-
+void NoticeUI();

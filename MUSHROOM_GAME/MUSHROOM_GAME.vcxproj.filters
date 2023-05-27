@@ -36,9 +36,6 @@
     <ClCompile Include="Ui.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="title.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="all_include.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -49,6 +46,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="setting.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="inventory.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,10 +80,10 @@
     <ClInclude Include="item.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="title.h">
+    <ClInclude Include="shop.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="shop.h">
+    <ClInclude Include="inventory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

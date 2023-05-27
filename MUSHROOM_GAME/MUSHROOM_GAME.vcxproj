@@ -130,6 +130,7 @@
     <ClCompile Include="all_include.c" />
     <ClCompile Include="create_map.c" />
     <ClCompile Include="enemy.c" />
+    <ClCompile Include="inventory.c" />
     <ClCompile Include="Item.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="map.c" />
@@ -137,22 +138,22 @@
     <ClCompile Include="Screen.c" />
     <ClCompile Include="setting.c" />
     <ClCompile Include="shop.c" />
-    <ClCompile Include="title.c" />
     <ClCompile Include="Ui.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="create_map.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="enemy.h" />
     <ClInclude Include="all_include.h" />
+    <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="setting.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="shop.h" />
-    <ClInclude Include="title.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

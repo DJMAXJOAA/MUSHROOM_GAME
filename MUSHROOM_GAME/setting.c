@@ -318,6 +318,12 @@ void MapObject()
 {
 	if (stage == TITLE)
 	{
+		if (GetAsyncKeyState(VK_RETURN))
+			{
+			stage = 1;
+			Init();
+			StageInit(stage);
+		}
 		FilePrintStr("title_background.txt", 0, 0);
 
 		SetColor(YELLOW);
@@ -589,5 +595,15 @@ void TotalUI()
 	{
 		PrintScreen(83, 29, "체력이 낮습니다.");
 		PrintScreen(83, 30, "체력을 회복하세요!!");
+	}
+}
+
+void TitleSelect()
+{
+	if (GetAsyncKeyState(VK_RETURN))
+	{
+		stage = 1;
+		Init();
+		StageInit(stage);
 	}
 }

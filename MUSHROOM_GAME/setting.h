@@ -1,9 +1,9 @@
 ﻿#pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#define CLOCK 15	// 프레임당 밀리초
+#define CLOCK 20	// 프레임당 밀리초
 
 #include "all_include.h"
-#include "title.h"
+#include "shop.h"
 
 const double fps;
 static char string[100];
@@ -27,4 +27,4 @@ int WaitRender(clock_t OldTime);	// 화면 지연시간
 void Release();						// 할당 해제(프로그램 종료)
 int GetKeyEvent();					// 키 입력받기(인벤창, 종료, 리셋 등)
 
-
+void TitleSelect();				// 타이틀 선택
