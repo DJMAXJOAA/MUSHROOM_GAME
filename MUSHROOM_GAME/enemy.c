@@ -1,4 +1,4 @@
 #include "enemy.h"
 
-enemy_target = &enemy;
-enemy_target_new = &enemy;
+EnemyDefault* enemy_target = &enemy;
+EnemyDefault* enemy_target_new = &enemy;

@@ -33,10 +33,11 @@ typedef struct Notice
 typedef struct
 {
 	int Critial;
+
 }Inventory;
 
 UI ui;
-UI* p_ui = &ui;
+UI* p_ui;
 Notice notice;
 Inventory inventory[10];
 

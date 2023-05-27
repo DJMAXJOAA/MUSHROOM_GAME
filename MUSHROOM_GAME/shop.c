@@ -10,10 +10,6 @@ void ShopSelect()
 			{
 				//돈이 부족합니다! 알림창 출력
 			}
-			else if (1)
-			{
-				// 인벤토리 꽉찼습니다! 알림창 출력
-			}
 			else
 			{
 				ui.Money -= 200;
@@ -40,30 +36,30 @@ void ShopSelect()
 
 	if (stage == SHOP1)
 	{
-		if (GetAsyncKeyState(VK_LEFT) & 0x8000 && second <= 0)
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000 && second_all <= 0)
 		{
 			if (shop.select == 2) shop.select = 1;
-			second = 0.1;
+			second_all = 0.1;
 		}
 
-		if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && second <= 0)
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && second_all <= 0)
 		{
 			if (shop.select == 1) shop.select = 2;
-			second = 0.1;
+			second_all = 0.1;
 		}
 	}
 	else if (stage == ROULETTE)
 	{
-		if (GetAsyncKeyState(VK_UP) & 0x8000 && second <= 0)
+		if (GetAsyncKeyState(VK_UP) & 0x8000 && second_all <= 0)
 		{
 			if (shop.select == 2) shop.select = 1;
-			second = 0.1;
+			second_all = 0.1;
 		}
 
-		if (GetAsyncKeyState(VK_DOWN) & 0x8000 && second <= 0)
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000 && second_all <= 0)
 		{
 			if (shop.select == 1) shop.select = 2;
-			second = 0.1;
+			second_all = 0.1;
 		}
 	}
 }
@@ -148,9 +144,4 @@ void RouletteFilePrint()
 		}
 	}
 	SetColor(WHITE);
-}
-
-void InventoryAdd()
-{
-
 }

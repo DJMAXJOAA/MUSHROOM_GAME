@@ -18,9 +18,6 @@
     <ClCompile Include="main.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="inventory.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Item.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -46,6 +43,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="enemy.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="map.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="setting.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,9 +84,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="shop.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="inventory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

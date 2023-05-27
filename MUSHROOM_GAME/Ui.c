@@ -1,5 +1,7 @@
 #include "UI.h"
 
+UI* p_ui = &ui;
+
 void InitNotice()
 {
 	notice.Critical = 0;

@@ -1,5 +1,9 @@
 #include "player.h"
 
+char PLAYER_STR1[] = "　△　";
+char PLAYER_STR2[] = "◁▣▷";
+char PLAYER_STR3[] = "　▽　";		// 플레이어의 생김새
+
 void PlayerMove()
 {
 	if (player.isReady == NOW_ATTACKING)
@@ -106,11 +110,11 @@ void PlayerAttack()
 	if (player.isReady == CAN_ATTACK && GetAsyncKeyState(0x41) & 0x8000)
 	{
 		notice.CollideEnemy = FALSE;
-		second = 0;
+		second_all = 0;
 		player.isReady = NOW_ATTACKING;
 	}
 
-	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && second == 0)
+	if (player.isReady == NOW_ATTACKING && GetAsyncKeyState(0x46) & 0x8000 && second_all == 0)
 	{
 		if (missile->x >= 98 && missile->x <= 102)	// 공격 타이밍 맞으면
 		{
@@ -158,7 +162,7 @@ void PlayerAttack()
 				missile->x = 82;
 				enemy_target->hp -= p_ui->MyAtt;
 				p_ui->MyAtt = temp;		// 크리티컬 데미지 초기화
-				second = ATTACK_COOLDOWN;
+				second_all = ATTACK_COOLDOWN;
 			}
 		}
 		else if (missile->x > 90)	// 공격 타이밍 안맞으면 : 내 피가 깎임
@@ -300,6 +304,6 @@ void Attack_CoolDown()
 	else
 	{
 		ui.MyHP -= enemy_target->att;
-		second = ATTACK_COOLDOWN;
+		second_all = ATTACK_COOLDOWN;
 	}
 }

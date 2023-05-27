@@ -1,4 +1,8 @@
 #include "all_include.h"
+#include "Screen.h"
+
+double second_all = 0;			// 클락 시간 초
+int stage  = 1;			// 시작 맵 설정
 
 double random_double(int range_min, int range_max)
 {
@@ -14,7 +18,7 @@ int random(int range_min, int range_max)
 	return random;
 }
 
-void PrintScreen(double x, double y, char* string)
+void PrintScreen(int x, int y, char* string)
 {
 	DWORD dw;
 	COORD CursorPosition = { x, y };

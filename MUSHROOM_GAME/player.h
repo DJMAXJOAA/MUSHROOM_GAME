@@ -2,9 +2,9 @@
 #include "all_include.h"
 #include "ui.h"
 
-char PLAYER_STR1[] = "　△　";		
-char PLAYER_STR2[] = "◁▣▷";
-char PLAYER_STR3[] = "　▽　";		// 플레이어의 생김새
+char PLAYER_STR1[];
+char PLAYER_STR2[];
+char PLAYER_STR3[];
 
 enum
 {
