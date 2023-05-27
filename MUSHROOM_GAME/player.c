@@ -169,7 +169,7 @@ void PlayerAttack()
 		{
 			missile->x = 82;
 			missile->extinct = TRUE;
-			Attack_CoolDown();
+			AttackCoolDown();
 			notice.Damaged = TRUE;
 			notice.HitEnemy = FALSE;
 			notice.Critical = 0;
@@ -228,7 +228,7 @@ void AttackTiming()
 	{
 		missile1.x = 82;
 		missile1.extinct = TRUE;
-		Attack_CoolDown();
+		AttackCoolDown();
 		notice.Damaged = TRUE;
 		notice.HitEnemy = FALSE;
 		notice.Critical = 0;
@@ -247,7 +247,7 @@ void AttackTiming()
 	{
 		missile2.x = 82;
 		missile2.extinct = TRUE;
-		Attack_CoolDown();
+		AttackCoolDown();
 		notice.Damaged = TRUE;
 		notice.HitEnemy = FALSE;
 		notice.Critical = 0;
@@ -263,7 +263,7 @@ void AttackTiming()
 	}
 	if (missile3.x > 118 && missile2.extinct == TRUE)
 	{
-		Attack_CoolDown();
+		AttackCoolDown();
 		player.isReady = CAN_ATTACK;
 		MissileInit();
 		notice.Damaged = TRUE;
@@ -290,12 +290,12 @@ void MissileInit()
 	missile1.extinct = FALSE;
 	missile2.extinct = FALSE;
 	missile3.extinct = FALSE;
-	missile1.interval = random_double(10, 30);
-	missile2.interval = random_double(10, 31);
-	missile3.interval = random_double(10, 32);
+	missile1.interval = RandomDouble(10, 30);
+	missile2.interval = RandomDouble(10, 31);
+	missile3.interval = RandomDouble(10, 32);
 }
 
-void Attack_CoolDown()
+void AttackCoolDown()
 {
 	if (enemy_target->att >= ui.MyHP)
 	{

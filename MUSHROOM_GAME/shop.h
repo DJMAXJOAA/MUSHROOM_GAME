@@ -23,4 +23,3 @@ void ShopSelect();
 void RouletteInit();
 void RouletteMove();
 void RouletteFilePrint();
-

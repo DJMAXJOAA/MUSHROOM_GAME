@@ -68,7 +68,7 @@ void TotalUI()
 
 	sprintf(string, "%s\t%s", ui.Player_Name, ui.Player_HPbar);
 	PrintScreen(83, 4, string);
-	sprintf(string, "HP:%.1lf / ATT:%.1lf\t", ui.MyHP, ui.MyAtt);
+	sprintf(string, "HP:%.1lf - MAXHP:%.1lf / ATT:%.1lf\t", ui.MyHP, ui.MyMaxHP, ui.MyAtt);
 	PrintScreen(83, 5, string);
 	sprintf(string, "%s\t%s", enemy_target->name, ui.Enemy_HPbar);
 	PrintScreen(83, 6, string);
@@ -112,6 +112,12 @@ void TotalUI()
 			PrintScreen(83, 15, "S 5%, A 15%, B 30% C 50%");
 		}
 	}
+	else if (ui.state == TRUE)	// 인벤토리창 수정할때(이거 전투나 장애물때 안되게 수정하기 나중에)
+	{
+		sprintf(string, "%d.%s 선택 : 판매가 %d원", which_weapon_use, inventory[which_weapon_use].info->name, inventory[which_weapon_use].info->sell_money);
+		PrintScreen(83, 14, string);
+		PrintScreen(83, 15, "Y 장착, S 판매, N 취소");
+	}
 	else if (notice.Danger == TRUE)	// 장애물에 닿고 있을 때
 	{
 		PrintScreen(83, 14, "장애물에 닿고 있어요. 조심하세요!");
@@ -148,13 +154,15 @@ void TotalUI()
 		PrintScreen(83, 14, "A키  공격시작");
 		PrintScreen(83, 15, "타이밍 맞춰서 F키 공격(크리티컬 x1.5)");
 	}
-
+		
 	for (int i = 0; i < 10; i++)
 	{
 		if (inventory[i].use == TRUE)
 		{
-			sprintf(string, "%c %s : ATT+%.1lf, HP+%.1lf", inventory[i].info->rank, inventory[i].info->name, inventory[i].info->att, inventory[i].info->hp);
+			if (inventory[i].now_equip == TRUE) SetColor(YELLOW);	// 장착중이면 노란색
+			sprintf(string, "%d.%s %c : ATT+%.1lf HP+%.1lf", i, inventory[i].info->name, inventory[i].info->rank, inventory[i].info->att, inventory[i].info->hp);
 			PrintScreen(83, 17 + i, string);
+			SetColor(WHITE);
 		}
 	}
 

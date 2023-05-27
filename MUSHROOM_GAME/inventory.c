@@ -5,7 +5,7 @@ Inventory inventory[10];
 void AddInventory()
 {
 	inventory_count += 1;
-	int temp = random(0, 2);
+	int temp = Random(0, 2);
 	for (int i = 0; i < 10; i++)
 	{
 		if (inventory[i].use == FALSE)

@@ -51,6 +51,9 @@
     <ClCompile Include="inventory.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="equipment.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">

@@ -53,5 +53,5 @@ void PortalCheck(Portal* p);				// 캐릭터 포탈 판정 체크
 void AttackTiming();						// 캐릭터 공격시 타이밍 미사일 이동관련
 void MissileTargetChange(Missile* p);		// 판정선 근처에서 미사일의 참조를 바꿔준다
 void MissileInit();							// 미사일 초기화
-void Attack_CoolDown();						// 공격 쿨타임
+void AttackCoolDown();						// 공격 쿨타임
 

@@ -118,7 +118,7 @@ void RouletteInit()
 	{
 		for (int i = 0; i < shop.count_lange; i++)
 		{
-			shop.arr[i] = random(i, 100 - i) - i;
+			shop.arr[i] = Random(i, 100 - i) - i;
 		}
 	}
 }

@@ -130,6 +130,7 @@
     <ClCompile Include="all_include.c" />
     <ClCompile Include="create_map.c" />
     <ClCompile Include="enemy.c" />
+    <ClCompile Include="equipment.c" />
     <ClCompile Include="inventory.c" />
     <ClCompile Include="Item.c" />
     <ClCompile Include="main.c" />

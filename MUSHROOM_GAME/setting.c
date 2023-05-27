@@ -5,10 +5,12 @@ static char string[100] = { 0 };
 
 int ConstInit()
 {
+	
 	inventory_count = 0;
 	for (int i = 0; i < 10; i++)
 	{
 		inventory[i].use = FALSE;
+		inventory[i].now_equip = FALSE;
 		inventory[i].info = &item_C[0];
 	}
 
@@ -57,17 +59,17 @@ int Init()
 	missile1.x = 82;
 	missile1.y = 11;
 	missile1.speed = 1.5;
-	missile1.interval = random_double(10, 30);
+	missile1.interval = RandomDouble(10, 30);
 	missile1.extinct = FALSE;
 	missile2.x = 82;
 	missile2.y = 11;
 	missile2.speed = 1.5;
-	missile2.interval = random_double(11, 30);
+	missile2.interval = RandomDouble(11, 30);
 	missile2.extinct = FALSE;
 	missile3.x = 82;
 	missile3.y = 11;
 	missile3.speed = 1.5;
-	missile3.interval = random_double(12, 30);
+	missile3.interval = RandomDouble(12, 30);
 	missile3.extinct = FALSE;
 
 	ui.EnemyAtt = 0;
@@ -162,6 +164,7 @@ void Render()
 	if (stage == SHOP1) ShopSelect();
 	if (stage == END) TitleSelect();
 	
+	if (ui.state == TRUE) EquipmentItem();
 
 	MapObject();
 
@@ -424,7 +427,7 @@ void MapObject()
 			SetColor(WHITE);
 
 			ShopSelect();
-			PrintScreen(53, 14, "µî±Þ ¾ÆÀÌÅÛ È¹µæ!!");
+			PrintScreen(53, 14, "¾ÆÀÌÅÛ È¹µæ!!");
 			PrintScreen(53, 15, "´Ù½Ã »ÌÀ¸½Ã°Ú½À´Ï±î??");
 
 			if (shop.select == 1) PrintScreen(51, 17, "¢º"); else PrintScreen(51, 17, "¢¹");

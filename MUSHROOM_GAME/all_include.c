@@ -4,14 +4,14 @@
 double second_all = 0;			// 클락 시간 초
 int stage  = 0;			// 시작 맵 설정
 
-double random_double(int range_min, int range_max)
+double RandomDouble(int range_min, int range_max)
 {
 	srand((unsigned int)time(NULL));
 	double random = rand() % (range_max - range_min + 1) + range_min;
 	return random;
 }
 
-int random(int range_min, int range_max)
+int Random(int range_min, int range_max)
 {
 	srand((unsigned int)time(NULL));
 	int random = rand() % (range_max - range_min + 1) + range_min;

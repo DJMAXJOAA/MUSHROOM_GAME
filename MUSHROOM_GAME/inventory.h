@@ -2,7 +2,7 @@
 #include "all_include.h"
 #include "item.h"
 #include "shop.h"
-#include "inventory.h"
+#include "equipment.h"
 
 typedef struct Inventory
 {
