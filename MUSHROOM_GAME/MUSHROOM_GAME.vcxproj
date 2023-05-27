@@ -147,6 +147,7 @@
     </ClInclude>
     <ClInclude Include="enemy.h" />
     <ClInclude Include="all_include.h" />
+    <ClInclude Include="equipment.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="map.h" />

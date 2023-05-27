@@ -10,6 +10,10 @@ void ShopSelect()
 			{
 				//돈이 부족합니다! 알림창 출력
 			}
+			else if (inventory_count == 10)
+			{
+				//인벤창 꽉찼습니다! 알림창 출력
+			}
 			else
 			{
 				ui.Money -= 200;
@@ -68,7 +72,7 @@ void RouletteMove()
 {
 	if (shop.count_lange <= 6)	// 인벤토리에 추가, 알림 출력
 	{
-		shop.count_lange = 100;
+		shop.count_lange = SHOP_COUNT_LANGE;
 		shop.count = 0;
 		shop.count_stop = TRUE;
 
@@ -85,6 +89,7 @@ void RouletteMove()
 			shop.rank = B;
 		}
 		else shop.rank = C;
+		AddInventory();
 	}
 	if (shop.count == 2)
 	{
@@ -97,7 +102,7 @@ void RouletteMove()
 
 void RouletteInit()
 {
-	shop.count_lange = 100;
+	shop.count_lange = SHOP_COUNT_LANGE;
 	shop.count = 10;
 	shop.count_stop = FALSE;
 	shop.rank = 5;

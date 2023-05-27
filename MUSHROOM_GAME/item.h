@@ -8,9 +8,10 @@ enum item_rank
 
 typedef struct Item
 {
-	char rank;
-	double att;
-	double hp;
+	char rank;		// 랭크
+	char name[20];	// 장비 이름
+	double att;		// 추가공격력
+	double hp;		// 추가체력
 }Item;
 
 Item item_S[3];

@@ -1,6 +1,9 @@
 #pragma once
 #include "all_include.h"
 #include "enemy.h"
+#include "player.h"
+#include "shop.h"
+#include "inventory.h"
 
 typedef struct UI
 {
@@ -37,4 +40,4 @@ void InitNotice();	// ui 알림창 초기화
 void Player_HPbar(); // 플레이어 체력바
 void Enemy_HPbar(); // 몬스터 체력바
 void ShopSelect();	// 상점 선택
-void NoticeUI();
+void TotalUI();

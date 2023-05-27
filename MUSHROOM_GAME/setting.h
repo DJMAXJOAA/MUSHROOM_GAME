@@ -2,7 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define CLOCK 20	// 프레임당 밀리초
 
-#include "all_include.h"
+#include "all_include.H"
 #include "shop.h"
 
 const double fps;
@@ -20,11 +20,9 @@ void Render();						// 화면 출력
 void MapObject();					// 맵 뒷배경 (사실상 씬)
 void PlayerControl();			// 1. 플레이어 관련 함수
 void MapInit(int(*map)[HEIGHT]);	// 맵 배열 생성(벽, 장애물, 포탈, NPC 등등 생성)
-void TotalUI();					// 2. UI 관련 함수
 
 /* 화면 관련 */
 int WaitRender(clock_t OldTime);	// 화면 지연시간
 void Release();						// 할당 해제(프로그램 종료)
 int GetKeyEvent();					// 키 입력받기(인벤창, 종료, 리셋 등)
-
 void TitleSelect();				// 타이틀 선택

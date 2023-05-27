@@ -1,4 +1,7 @@
 #pragma once
+
+#define SHOP_COUNT_LANGE 100
+
 #include "all_include.h"
 #include "player.h"
 

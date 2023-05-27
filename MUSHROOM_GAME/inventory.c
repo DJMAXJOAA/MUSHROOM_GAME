@@ -1,9 +1,10 @@
 #include "inventory.h"
 
-Inventory inventory[10] = { 0 };
+Inventory inventory[10];
 
 void AddInventory()
 {
+	inventory_count += 1;
 	int temp = random(0, 2);
 	for (int i = 0; i < 10; i++)
 	{
@@ -13,21 +14,25 @@ void AddInventory()
 			{
 				inventory[i].info = &item_S[temp];
 				inventory[i].use = TRUE;
+				break;
 			}
 			else if (shop.rank == A)
 			{
 				inventory[i].info = &item_A[temp];
 				inventory[i].use = TRUE;
+				break;
 			}
 			else if (shop.rank == B)
 			{
 				inventory[i].info = &item_B[temp];
 				inventory[i].use = TRUE;
+				break;
 			}
 			else
 			{
 				inventory[i].info = &item_C[temp];
 				inventory[i].use = TRUE;
+				break;
 			}
 		}
 	}
