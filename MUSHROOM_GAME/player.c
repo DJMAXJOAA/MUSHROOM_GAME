@@ -8,6 +8,7 @@ void PlayerMove()
 {
 	if (player.isReady == NOW_ATTACKING)
 	{
+		// 공격중 이동불가
 	}
 	else
 	{
@@ -45,7 +46,6 @@ void PlayerMove()
 			sprintf(player.strPlayer3, "　▼　");
 		}
 	}
-
 }
 
 void PlayerCollide()
@@ -118,10 +118,11 @@ void PlayerAttack()
 	{
 		if (missile->x >= 98 && missile->x <= 102)	// 공격 타이밍 맞으면
 		{
-			if (missile->x == 100)			// 정박 : 크리티컬
+			/* 정확히 정박 혹은 크리보정 아이템 착용시 */
+			if (missile->x == 100 || inventory[now_equipment].info->ability == CRIT_RANGE_UP)
 			{
 				temp = p_ui->MyAtt;
-				p_ui->MyAtt *= 1.5;
+				p_ui->MyAtt *= ui.CritDMG;
 				notice.Damaged = FALSE;
 				notice.HitEnemy = FALSE;
 				notice.Critical += 1;
@@ -297,7 +298,7 @@ void MissileInit()
 
 void AttackCoolDown()
 {
-	if (enemy_target->att >= ui.MyHP)
+	if (enemy_target->att >= ui.MyHP || inventory[now_equipment].info->ability == BURSERKR)
 	{
 		ui.MyHP = 0;
 	}
@@ -305,5 +306,52 @@ void AttackCoolDown()
 	{
 		ui.MyHP -= enemy_target->att;
 		second_all = ATTACK_COOLDOWN;
+	}
+}
+
+void PlayerBuff()
+{
+
+	if (inventory[now_equipment].info->ability == SLOW) // 미사일슬로우
+	{
+		ui.CritDMG = 1.5;
+		missile1.speed = 1;
+		missile2.speed = 1;
+		missile3.speed = 1;
+	}
+	else if (inventory[now_equipment].info->ability == CRIT_DMG1) // 크리*1.75
+	{
+		ui.CritDMG = 1.75;
+		missile1.speed = 1.5;
+		missile2.speed = 1.5;
+		missile3.speed = 1.5;
+	}
+	else if (inventory[now_equipment].info->ability == CRIT_DMG2) // 크리*2.0
+	{
+		ui.CritDMG = 2.0;
+		missile1.speed = 1.5;
+		missile2.speed = 1.5;
+		missile3.speed = 1.5;
+	}
+	else if (inventory[now_equipment].info->ability == CRIT_RANGE_UP) // 크리확정
+	{
+		ui.CritDMG = 1.5;
+		missile1.speed = 1.5;
+		missile2.speed = 1.5;
+		missile3.speed = 1.5;
+	}
+	else if (inventory[now_equipment].info->ability == BURSERKR) // 맞으면주금
+	{
+		ui.CritDMG = 1.5;
+		missile1.speed = 1.5;
+		missile2.speed = 1.5;
+		missile3.speed = 1.5;
+	}
+	else if (inventory[now_equipment].info->ability == NONE)	// 보통
+	{
+		ui.CritDMG = 1.5;
+		missile1.speed = 1.5;
+		missile2.speed = 1.5;
+		missile3.speed = 1.5;
 	}
 }

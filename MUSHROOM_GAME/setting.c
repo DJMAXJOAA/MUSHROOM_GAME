@@ -5,7 +5,6 @@ static char string[100] = { 0 };
 
 int ConstInit()
 {
-	
 	inventory_count = 0;
 	for (int i = 0; i < 10; i++)
 	{
@@ -13,7 +12,8 @@ int ConstInit()
 		inventory[i].now_equip = FALSE;
 		inventory[i].info = &item_C[0];
 	}
-
+	
+	ui.state = UI_INVENTORY_DEACTIVE;
 	ui.Money = 0;
 	ui.MyAtt = 10;
 	ui.MyMaxHP = 100;
@@ -22,6 +22,26 @@ int ConstInit()
 
 	ui.position.x = 80;
 	ui.position.y = 0;
+
+	inventory[0].use = TRUE;
+	inventory[0].info = &item_S[0];
+	inventory[1].use = TRUE;
+	inventory[1].info = &item_S[1];
+	inventory[2].use = TRUE;
+	inventory[2].info = &item_S[2];
+	inventory[3].use = TRUE;
+	inventory[3].info = &item_A[0];
+	inventory[4].use = TRUE;
+	inventory[4].info = &item_A[1];
+	/*
+	{'S', "짱럭키 소드", 40, 70, 500, "치명타 판정 범위가 증가합니다.", CRIT_RANGE_UP},
+	{'S', "무한의 대검", 40, 40, 500, "치명타 피해가 2배가 됩니다.", CRIT_DMG2},
+	{'S', "상남자 소드", 100, 0, 500, "공격에 실패하면 죽습니다.", BURSERKR}
+
+	{'A', "느려느려검", 20, 50, 250, "타이밍 미사일 속도가 느려집니다.", SLOW},
+	{'A', "앗따가 소드", 25, 20, 250, "치명타 피해가 1.75배가 됩니다.", CRIT_DMG1},
+	{'A',"주거랑 소드", 40, 0, 250, "깡공격력 원툴입니다",NONE}
+	*/
 
 	return 0;
 }
@@ -117,10 +137,10 @@ int StageInit(int stage_number)
 		strcpy(enemy1.info, "간단하게 캘 수 있다");
 
 		enemy2.att = 15;
-		enemy2.hp = 150;
-		enemy2.maxhp = 150;
+		enemy2.hp = 500;
+		enemy2.maxhp = 500;
 		enemy2.dead = FALSE;
-		enemy2.money = 150;
+		enemy2.money = 1000;
 		strcpy(enemy2.name, "중간버섯");
 		strcpy(enemy2.info, "살짝 캐기 버겁다");
 
@@ -164,7 +184,7 @@ void Render()
 	if (stage == SHOP1) ShopSelect();
 	if (stage == END) TitleSelect();
 	
-	if (ui.state == TRUE) EquipmentItem();
+	if (ui.state == UI_INVENTORY_ACTIVE) EquipmentItem();
 
 	MapObject();
 
@@ -427,7 +447,8 @@ void MapObject()
 			SetColor(WHITE);
 
 			ShopSelect();
-			PrintScreen(53, 14, "아이템 획득!!");
+			sprintf(string, "%c등급 아이템 획득!!", inventory[shop_result].info->rank);
+			PrintScreen(53, 14, string);
 			PrintScreen(53, 15, "다시 뽑으시겠습니까??");
 
 			if (shop.select == 1) PrintScreen(51, 17, "▶"); else PrintScreen(51, 17, "▷");

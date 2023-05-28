@@ -1,5 +1,4 @@
 #pragma once
-
 #define SHOP_COUNT_LANGE 100
 
 #include "all_include.h"
@@ -15,6 +14,8 @@ typedef struct SHOP
 	int arr[100];
 	int cheat;
 }SHOP;
+
+int shop_result;
 
 SHOP shop;
 SHOP* pshop;

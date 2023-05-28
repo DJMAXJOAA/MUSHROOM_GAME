@@ -2,8 +2,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define CLOCK 20	// 프레임당 밀리초
 
-#include "all_include.H"
-#include "shop.h"
+#include "all_include.h"
+#include "ui.h"
 
 const double fps;
 static char string[100];

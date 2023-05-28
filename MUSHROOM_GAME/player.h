@@ -54,4 +54,4 @@ void AttackTiming();						// 캐릭터 공격시 타이밍 미사일 이동관련
 void MissileTargetChange(Missile* p);		// 판정선 근처에서 미사일의 참조를 바꿔준다
 void MissileInit();							// 미사일 초기화
 void AttackCoolDown();						// 공격 쿨타임
-
+void PlayerBuff();							// 아이템 착용 버프

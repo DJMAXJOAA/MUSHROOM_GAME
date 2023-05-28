@@ -75,7 +75,9 @@ void TotalUI()
 	sprintf(string, "HP:%.1lf / ATT:%.1lf\t", ui.EnemyHP, ui.EnemyAtt);
 	PrintScreen(83, 7, string);
 
-	if (player.state == DISAPPEAR)	// 상점 안에서의 인터페이스
+	/* 알림 UI */
+		/* 상점창 */
+	if (player.state == DISAPPEAR)	
 	{
 		if (shop.select == 1 && ui.Money < 200)
 		{
@@ -86,25 +88,12 @@ void TotalUI()
 			PrintScreen(83, 14, "인벤토리가 꽉찼습니다!");
 			PrintScreen(83, 15, "아이템을 판매해주세요.");
 		}
-		else if (shop.rank == S)
+		else if (C <= shop.rank && shop.rank <= S)
 		{
-			PrintScreen(83, 14, "등급S : 5%");
-			PrintScreen(83, 15, "확실히 특별한 능력이 있습니다!");
-		}
-		else if (shop.rank == A)
-		{
-			PrintScreen(83, 14, "등급A : 10%");
-			PrintScreen(83, 15, "쪼금 특별한 능력이 있습니다.");
-		}
-		else if (shop.rank == B)
-		{
-			PrintScreen(83, 14, "등급B : 35%");
-			PrintScreen(83, 15, "C 무기보다는 살짝 좋습니다.");
-		}
-		else if (shop.rank == C)
-		{
-			PrintScreen(83, 14, "등급C : 50%");
-			PrintScreen(83, 15, "지극히 평범한 무기입니다.");
+			sprintf(string, "등급%c : %s ", inventory[shop_result].info->rank, inventory[shop_result].info->name);
+			PrintScreen(83, 14, string);
+			sprintf(string, "%s ",inventory[shop_result].info->data);
+			PrintScreen(83, 15, string);
 		}
 		else
 		{
@@ -112,7 +101,10 @@ void TotalUI()
 			PrintScreen(83, 15, "S 5%, A 15%, B 30% C 50%");
 		}
 	}
-	else if (ui.state == TRUE)	// 인벤토리창 수정할때(이거 전투나 장애물때 안되게 수정하기 나중에)
+
+		/* 전투 알림 UI 인벤토리창 수정할때
+		(이거 전투나 장애물때 안되게 수정하기 나중에) */
+	else if (ui.state == UI_INVENTORY_ACTIVE)	
 	{
 		sprintf(string, "%d.%s 선택 : 판매가 %d원", which_weapon_use, inventory[which_weapon_use].info->name, inventory[which_weapon_use].info->sell_money);
 		PrintScreen(83, 14, string);
@@ -136,7 +128,7 @@ void TotalUI()
 	{
 		sprintf(string, "크리티컬!! %d COMBO", notice.Critical);
 		PrintScreen(83, 14, string);
-		sprintf(string, "%.lf데미지를 주었습니다!", ui.MyAtt * 1.5);
+		sprintf(string, "%.lf데미지를 주었습니다!", ui.MyAtt * ui.CritDMG);
 		PrintScreen(83, 15, string);
 	}
 	else if (notice.HitEnemy == TRUE)	// 공격 성공
@@ -151,21 +143,70 @@ void TotalUI()
 	}
 	else
 	{
-		PrintScreen(83, 14, "A키  공격시작");
-		PrintScreen(83, 15, "타이밍 맞춰서 F키 공격(크리티컬 x1.5)");
+		PrintScreen(83, 14, "A키 공격시작, F키 공격");
+		PrintScreen(83, 15, "I 인벤토리, E 장비창");
 	}
 		
-	for (int i = 0; i < 10; i++)
+	/* 장비창, 인벤창, 사용템창 */
+		/* 인벤창, 인벤선택창 */
+	if (ui.state == UI_INVENTORY_DEACTIVE || ui.state == UI_INVENTORY_ACTIVE || stage == ROULETTE) // 룰렛창 인벤고정
 	{
-		if (inventory[i].use == TRUE)
+		PrintScreen(83, 17, "INVENTORY");
+		for (int i = 0; i < 10; i++)
 		{
-			if (inventory[i].now_equip == TRUE) SetColor(YELLOW);	// 장착중이면 노란색
-			sprintf(string, "%d.%s %c : ATT+%.1lf HP+%.1lf", i, inventory[i].info->name, inventory[i].info->rank, inventory[i].info->att, inventory[i].info->hp);
-			PrintScreen(83, 17 + i, string);
-			SetColor(WHITE);
+			if (inventory[i].use == TRUE)
+			{
+				if (inventory[i].now_equip == TRUE) SetColor(YELLOW);	// 장착중이면 노란색
+				sprintf(string, "%d.%s %c : ATT+%.1lf HP+%.1lf", i, inventory[i].info->name, inventory[i].info->rank, inventory[i].info->att, inventory[i].info->hp);
+				PrintScreen(83, 18 + i, string);
+				SetColor(WHITE);
+			}
+		}
+	}
+	/* 장비창 */
+	else if (ui.state == UI_EQUIPMENT)
+	{
+		PrintScreen(83, 17, "EQUIPMENT");
+		SetColor(WHITE);
+		FilePrintStr("rankX.txt", 86, 18);
+		PrintScreen(83, 25, "무기 장착X");
+		for (int i = 0; i < 10; i++)
+		{
+			if (inventory[i].now_equip == TRUE)
+			{
+				if (inventory[i].info->rank == 'S')
+				{
+					SetColor(VIOLET);
+					FilePrintStr("rankS.txt", 86, 18);
+				}
+				else if (inventory[i].info->rank == 'A')
+				{
+					SetColor(GREEN);
+					FilePrintStr("rankA.txt", 86, 18);
+				}
+				else if (inventory[i].info->rank == 'B')
+				{
+					SetColor(SKYBLUE);
+					FilePrintStr("rankB.txt", 86, 18);
+				}
+				else if (inventory[i].info->rank == 'C')
+				{
+					SetColor(WHITE);
+					FilePrintStr("rankC.txt", 86, 18);
+				}
+				SetColor(WHITE);
+				sprintf(string, "%c RANK %s", inventory[i].info->rank, inventory[i].info->name);
+				PrintScreen(83, 25, string);
+				sprintf(string, "ATT+%.1lf HP+%.1lf", inventory[i].info->att, inventory[i].info->hp);
+				PrintScreen(83, 26, string);
+				sprintf(string, "%s ", inventory[i].info->data);
+				PrintScreen(83, 27, string);
+				break;
+			}
 		}
 	}
 
+	/* 사망 정보 */
 	if (player.state == DEAD)
 	{
 		PrintScreen(83, 29, "당신은 죽었습니다! 곧 부활합니다");
@@ -177,4 +218,21 @@ void TotalUI()
 		PrintScreen(83, 29, "체력이 낮습니다.");
 		PrintScreen(83, 30, "체력을 회복하세요!!");
 	}
+}
+
+void UISelect()
+{
+	if (GetAsyncKeyState(0x45) & 0x8000)	// E키 : Equipment 장비창
+	{
+		ui.state = UI_EQUIPMENT;
+		second_all = 0.2;
+	}
+	else if (GetAsyncKeyState(0x49) & 0x8000)	// I키 : Equipment 장비창
+	{
+		ui.state = UI_INVENTORY_DEACTIVE;
+		second_all = 0.2;
+	}
+
+	if (ui.state == UI_INVENTORY_DEACTIVE) EquipmentNumber();
+	else if (ui.state == UI_INVENTORY_ACTIVE) EquipmentItem();
 }

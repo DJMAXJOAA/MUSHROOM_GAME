@@ -24,17 +24,16 @@ int main()
 		/* 캐릭터 관련 함수들 */
 		Player_HPbar();
 		Enemy_HPbar();
+		UISelect();
 		if (player.state == ALIVE)
 		{
+			PlayerBuff();
 			PlayerCollide();
 			PlayerMove();
 			PlayerAttack();
 			AttackTiming();
-			EquipmentNumber();
-			if (ui.state == TRUE) EquipmentItem();	// 템장착
 		}
-		
-	
+
 		Render();		//화면 출력 (실제 main 함수)
 		PlayerDead();	//죽음 체크
 

@@ -10,6 +10,7 @@ void AddInventory()
 	{
 		if (inventory[i].use == FALSE)
 		{
+			shop_result = i;	// 결과를 알림창에 띄우기 위해
 			if (shop.rank == S)
 			{
 				inventory[i].info = &item_S[temp];

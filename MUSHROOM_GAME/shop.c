@@ -1,5 +1,7 @@
 #include "shop.h"
 
+int shop_result = 0;
+
 void ShopSelect()
 {
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
@@ -31,7 +33,7 @@ void ShopSelect()
 			StageInit(stage);
 		}
 	}
-	if (GetAsyncKeyState(0x45) & 0x8000)
+	if (GetAsyncKeyState(0x50) & 0x8000)	// 프린트 스크린 S확정
 	{
 		shop.cheat = TRUE;
 		RouletteInit();
