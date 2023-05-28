@@ -3,6 +3,7 @@
 
 double second_all = 0;	// 클락 시간 초
 int stage  = 0;			// 시작 맵 설정
+char string[100] = { 0 };
 
 double RandomDouble(int range_min, int range_max)
 {
@@ -49,4 +50,12 @@ void FilePrintStr(char* input_str, int x, int y)
 		i++;
 	}
 	fclose(fp);
+}
+
+int GetKeyEvent()
+{
+	if (_kbhit())	//_kbhit : 키보드가 눌렀음을 확인하는 함수
+		return _getch();	//읽은 문자 반환
+
+	return -1;
 }

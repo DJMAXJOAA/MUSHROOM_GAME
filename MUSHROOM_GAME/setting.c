@@ -1,55 +1,10 @@
 #include "setting.h"
 
 const double fps = CLOCK / (double)1000;
-static char string[100] = { 0 };
 
 int ConstInit()
 {
-	inventory_count = 0;
-	for (int i = 0; i < 10; i++)
-	{
-		inventory[i].use = FALSE;
-		inventory[i].now_equip = FALSE;
-		inventory[i].info = &item_C[0];
-	}
-	
-	ui.state = UI_INVENTORY_DEACTIVE;
-	ui.Money = 0;
-	ui.MyAtt = 10;
-	ui.MyMaxHP = 100;
-	ui.MyHP = 100;
-	strcpy(ui.Player_Name, "호옹이");
-
-	ui.position.x = 80;
-	ui.position.y = 0;
-
-	inventory[0].use = TRUE;
-	inventory[0].info = &item_S[0];
-	inventory[1].use = TRUE;
-	inventory[1].info = &item_S[1];
-	inventory[2].use = TRUE;
-	inventory[2].info = &item_S[2];
-	inventory[3].use = TRUE;
-	inventory[3].info = &item_A[0];
-	inventory[4].use = TRUE;
-	inventory[4].info = &item_A[1];
-	/*
-	{'S', "짱럭키 소드", 40, 70, 500, "치명타 판정 범위가 증가합니다.", CRIT_RANGE_UP},
-	{'S', "무한의 대검", 40, 40, 500, "치명타 피해가 2배가 됩니다.", CRIT_DMG2},
-	{'S', "상남자 소드", 100, 0, 500, "공격에 실패하면 죽습니다.", BURSERKR}
-
-	{'A', "느려느려검", 20, 50, 250, "타이밍 미사일 속도가 느려집니다.", SLOW},
-	{'A', "앗따가 소드", 25, 20, 250, "치명타 피해가 1.75배가 됩니다.", CRIT_DMG1},
-	{'A',"주거랑 소드", 40, 0, 250, "깡공격력 원툴입니다",NONE}
-	*/
-
-	return 0;
-}
-
-int Init()
-{
-	second_all = 0;
-
+	/* 캐릭터 생김새 */
 	player.nLength = strlen(PLAYER_STR1);
 	player.strPlayer1 = (char*)malloc(sizeof(char) * player.nLength);
 	strcpy(player.strPlayer1, PLAYER_STR1);
@@ -58,11 +13,39 @@ int Init()
 	player.strPlayer3 = (char*)malloc(sizeof(char) * player.nLength);
 	strcpy(player.strPlayer3, PLAYER_STR3);
 
+	/* 인벤창 비우기 */
+	inventory_count = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		inventory[i].use = FALSE;
+		inventory[i].now_equip = FALSE;
+		inventory[i].info = &item_C[0];
+	}
+	
+	/* UI 초기 셋팅 */
+	strcpy(ui.Player_Name, "님이름");
+	ui.state = UI_INVENTORY_DEACTIVE;
+	ui.Money = 0;
+	ui.MyAtt = 10;
+	ui.MyMaxHP = 100;
+	ui.MyHP = 100;
+
+	ui.position.x = 80;
+	ui.position.y = 0;
+
+	return 0;
+}
+
+int Init()
+{
+	second_all = 0;
+
 	player.position.x = 2;
 	player.position.y = 17;
 	player.isReady = CANT_ATTACK;
 	player.state = ALIVE;
 
+	/* 적 타겟 초기화 */
 	enemy.att = 0;
 	enemy.maxhp = 0;
 	enemy.hp = 0;
@@ -96,80 +79,6 @@ int Init()
 	ui.EnemyHP = 0;
 
 	InitNotice();
-
-	return 0;
-}
-
-int StageInit(int stage_number)
-{
-	switch (stage_number)
-	{
-	case TITLE: // 타이틀
-		map_pointer = map0;
-		break;
-
-	case TOWN:	// 마을
-		map_pointer = map1;
-
-		player.position.x = 2;
-		player.position.y = 17;
-
-		portal1.move_to_where = REGION1;
-		portal2.move_to_where = SHOP1;
-		portal3.move_to_where = SHOP2;
-		portal4.move_to_where = END;
-
-		break;
-
-	case REGION1:	// 던전
-		map_pointer = map2;
-
-		player.position.x = 4;
-		player.position.y = 14;
-
-		enemy_target = &enemy;
-		enemy1.att = 10;
-		enemy1.hp = 100;
-		enemy1.maxhp = 100;
-		enemy1.dead = FALSE;
-		enemy1.money = 100;
-		strcpy(enemy1.name, "작은버섯");
-		strcpy(enemy1.info, "간단하게 캘 수 있다");
-
-		enemy2.att = 15;
-		enemy2.hp = 500;
-		enemy2.maxhp = 500;
-		enemy2.dead = FALSE;
-		enemy2.money = 1000;
-		strcpy(enemy2.name, "중간버섯");
-		strcpy(enemy2.info, "살짝 캐기 버겁다");
-
-		portal1.move_to_where = TOWN;
-		portal2.move_to_where = END;
-		break;
-
-	case SHOP1:	// 상점 (캐릭 이동불가, 커서)
-		map_pointer = map3;
-
-		shop.select = 1;
-		shop.rank = 5;
-
-		break;
-
-	case SHOP2:
-		map_pointer = map3;
-
-		break;
-
-	case ROULETTE:
-		map_pointer = map3;
-
-		break;
-
-	case END:
-		map_pointer = map0;
-		break;
-	}
 
 	return 0;
 }
@@ -249,16 +158,10 @@ int WaitRender(clock_t OldTime)
 
 void Release()	//해제
 {
-
+	
 }
 
-int GetKeyEvent()
-{
-	if (_kbhit())	//_kbhit : 키보드가 눌렀음을 확인하는 함수
-		return _getch();	//읽은 문자 반환
 
-	return -1;
-}
 
 void MapInit(int(*map)[HEIGHT])
 {
@@ -343,142 +246,6 @@ void MapInit(int(*map)[HEIGHT])
 		}
 }
 
-
-void MapObject()
-{
-	if (stage == TITLE)
-	{
-		if (GetAsyncKeyState(VK_RETURN))
-			{
-			stage = 1;
-			Init();
-			StageInit(stage);
-		}
-		FilePrintStr("title_background.txt", 0, 0);
-
-		SetColor(YELLOW);
-		FilePrintStr("title1.txt", 12, 2);
-		FilePrintStr("title2.txt", 12, 20);
-		SetColor(WHITE);
-
-		PrintScreen(47, 16, "Press enter to START!");
-	}
-
-	if (stage == TOWN)
-	{
-		PrintScreen(58, 22, "무기 랜덤 뽑기");
-		PrintScreen(9, 22, "경품 교환소");
-		SetColor(GRAY);
-		FilePrintStr("house2.txt", 54, 23);
-		FilePrintStr("house3.txt", 1, 23);
-		SetColor(WHITE);
-
-		FilePrintStr("road.txt", 1, 16);
-
-		SetColor(GRAY);
-		FilePrintStr("house.txt", 1, 1);
-		SetColor(WHITE);
-
-		PrintScreen(33, 9, "쉼터");
-		for (int i = 0; i < 7; i++)
-		{
-			PrintScreen(37, 21 + i, "|");
-			PrintScreen(45, 21 + i, "|");
-		}
-		PrintScreen(46, 27, "--------");
-	}
-
-
-	if (stage == REGION1)
-	{
-		SetColor(D_GREEN);
-		FilePrintStr("background.txt", 4, 9);
-		FilePrintStr("background2.txt", 15, 5);
-		SetColor(WHITE);
-
-		for (int y = 0; y < WIDTH; y++)
-		{
-			for (int x = 0; x < HEIGHT; x++)
-			{
-				if (map2[y][x] == EMPTY) PrintScreen(x * 2, y, "　");
-			}
-		}
-	}
-
-	if (stage == SHOP1)
-	{
-		player.state = DISAPPEAR;
-		SetColor(D_GRAY);
-		FilePrintStr("background_pattern.txt", 1, 1);
-		FilePrintStr("background_pattern.txt", 1, 16);
-		SetColor(WHITE);
-
-		FilePrintStr("shop_border.txt", 4, 8);
-
-		SetColor(YELLOW);
-		PrintScreen(28, 10, "※※ 무기 랜덤 뽑기 ※※");
-		PrintScreen(26, 11, "S등급 무기에 도전해 보세요!!");
-		SetColor(WHITE);
-
-		PrintScreen(36, 14, "얻은 무기는 마일리지로 교환 가능합니다.");
-		PrintScreen(45, 15, "마일리지로 경품을 교환하세요!");
-
-		if (shop.select == 1) PrintScreen(11, 21, "▶"); else PrintScreen(11, 21, "▷");
-		PrintScreen(13, 21, "1회 뽑기 :  200원");
-
-		if (shop.select == 2) PrintScreen(46, 21, "▶"); else PrintScreen(46, 21, "▷");
-		PrintScreen(48, 21, "상점에서 나갑니다");
-
-	}
-
-	if (stage == ROULETTE)
-	{
-
-		if (shop.rank == S)
-		{
-			SetColor(YELLOW);
-			FilePrintStr("roulette_border.txt", 0, 0);
-		}
-
-		if (shop.count_stop == TRUE)
-		{
-			SetColor(YELLOW);
-			FilePrintStr("roulette_box.txt", 6, 12);
-			SetColor(WHITE);
-
-			ShopSelect();
-			sprintf(string, "%c등급 아이템 획득!!", inventory[shop_result].info->rank);
-			PrintScreen(53, 14, string);
-			PrintScreen(53, 15, "다시 뽑으시겠습니까??");
-
-			if (shop.select == 1) PrintScreen(51, 17, "▶"); else PrintScreen(51, 17, "▷");
-			PrintScreen(53, 17, "다시 뽑기 :  200원");
-
-			if (shop.select == 2) PrintScreen(51, 18, "▶"); else PrintScreen(51, 18, "▷");
-			PrintScreen(53, 18, "상점에서 나갑니다.");
-		}
-
-		RouletteFilePrint();
-		RouletteMove();
-
-
-
-		SetColor(WHITE);
-	}
-
-	if (stage == END)
-	{
-		SetColor(YELLOW);
-		FilePrintStr("ending_background1.txt", 0, 5);
-		FilePrintStr("ending_background2.txt", 10, 17);
-		FilePrintStr("ending_background3.txt", 55, 17);
-		PrintScreen(88, 27, "플레이 해주셔서 감사합니다!!");
-		PrintScreen(97, 28, "인하게임개발 최형준");
-		SetColor(WHITE);
-
-	}
-}
-
 void PlayerControl()
 {
 	if (player.state == ALIVE)
@@ -513,8 +280,6 @@ void PlayerControl()
 		SetColor(WHITE);
 	}
 }
-
-
 
 void TitleSelect()
 {

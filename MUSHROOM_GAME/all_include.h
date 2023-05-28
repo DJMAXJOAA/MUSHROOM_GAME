@@ -43,6 +43,7 @@
 
 int stage;				// 시작 맵 설정
 double second_all;			// 클락 시간 초
+char string[100];
 
 enum map_name
 {
@@ -67,6 +68,7 @@ typedef struct Position_collide
 
 double RandomDouble(int range_min, int range_max);		//랜덤함수 범위지정 실수
 int Random(int range_min, int range_max);				//랜덤함수 범위지정
-void PrintScreen(int x, int y, char* string);		// 문자열 출력
+void PrintScreen(int x, int y, char* string);			// 문자열 출력
 void SetColor(unsigned short color);					// 색 설정
 void FilePrintStr(char* input_str, int x, int y);		// 텍스트 파일 가져와서 화면 출력하기
+int GetKeyEvent();										// 키 입력 받기

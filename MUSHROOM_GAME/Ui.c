@@ -59,21 +59,30 @@ void TotalUI()
 		PrintScreen(ui.position.x + i, 28, "…");
 	}
 
-	sprintf(string, "x : %d / y : %d", player.collide.x, player.collide.y);
-	PrintScreen(83, 1, string);
+	/*sprintf(string, "x : %d / y : %d", player.collide.x, player.collide.y);
+	PrintScreen(83, 1, string);*/
 	sprintf(string, "보유 돈 : %d", ui.Money);
-	PrintScreen(83, 2, string);
-	sprintf(string, "stage number : %d", stage);
-	PrintScreen(83, 3, string);
+	PrintScreen(83, 1, string);
+	/*sprintf(string, "stage number : %d", stage);
+	PrintScreen(83, 3, string);*/
 
-	sprintf(string, "%s\t%s", ui.Player_Name, ui.Player_HPbar);
+	sprintf(string, "%s", ui.Player_Name);
+	PrintScreen(83, 3, string);
+	sprintf(string, "%s", ui.Player_HPbar);
+	PrintScreen(98, 3, string);
+	sprintf(string, "HP:%.1lf / %.1lf", ui.MyHP, ui.MyMaxHP);
 	PrintScreen(83, 4, string);
-	sprintf(string, "HP:%.1lf - MAXHP:%.1lf / ATT:%.1lf\t", ui.MyHP, ui.MyMaxHP, ui.MyAtt);
-	PrintScreen(83, 5, string);
-	sprintf(string, "%s\t%s", enemy_target->name, ui.Enemy_HPbar);
+	sprintf(string, "::: ATT:%.1lf", ui.MyAtt);
+	PrintScreen(105, 4, string);
+
+	sprintf(string, "%s", enemy_target->name);
 	PrintScreen(83, 6, string);
-	sprintf(string, "HP:%.1lf / ATT:%.1lf\t", ui.EnemyHP, ui.EnemyAtt);
+	sprintf(string, "%s", ui.Enemy_HPbar);
+	PrintScreen(98, 6, string);
+	sprintf(string, "HP:%.1lf / %.1lf", enemy_target->hp, enemy_target->maxhp);
 	PrintScreen(83, 7, string);
+	sprintf(string, "::: ATT:%.1lf", ui.EnemyAtt);
+	PrintScreen(105, 7, string);
 
 	/* 알림 UI */
 		/* 상점창 */
@@ -143,8 +152,8 @@ void TotalUI()
 	}
 	else
 	{
-		PrintScreen(83, 14, "A키 공격시작, F키 공격");
-		PrintScreen(83, 15, "I 인벤토리, E 장비창");
+		PrintScreen(83, 14, "A키로 공격시작 후 F키 공격(3번)");
+		PrintScreen(83, 15, "I 인벤토리 0~9번키 선택, E 장비창");
 	}
 		
 	/* 장비창, 인벤창, 사용템창 */
