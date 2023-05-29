@@ -21,6 +21,7 @@ SHOP shop;
 SHOP* pshop;
 
 void ShopSelect();
+void ShopSelect2();
 void RouletteInit();
 void RouletteMove();
 void RouletteFilePrint();

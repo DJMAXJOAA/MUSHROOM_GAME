@@ -33,6 +33,17 @@ int ConstInit()
 	ui.position.x = 80;
 	ui.position.y = 0;
 
+	inventory[0].use = TRUE;
+	inventory[0].info = &item_S[0];
+	inventory[1].use = TRUE;
+	inventory[1].info = &item_S[1];
+	inventory[2].use = TRUE;
+	inventory[2].info = &item_S[2];
+	inventory[3].use = TRUE;
+	inventory[3].info = &item_A[0];
+	inventory[4].use = TRUE;
+	inventory[4].info = &item_A[1];
+
 	return 0;
 }
 
@@ -91,6 +102,7 @@ void Render()
 	/* 각 맵마다 오브젝트, 맵 요소 */
 	if (stage == TITLE) TitleSelect();
 	if (stage == SHOP1) ShopSelect();
+	if (stage == SHOP2) ShopSelect2();
 	if (stage == END) TitleSelect();
 	
 	if (ui.state == UI_INVENTORY_ACTIVE) EquipmentItem();

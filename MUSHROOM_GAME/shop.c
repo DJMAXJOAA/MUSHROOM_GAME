@@ -33,7 +33,7 @@ void ShopSelect()
 			StageInit(stage);
 		}
 	}
-	if (GetAsyncKeyState(0x50) & 0x8000)	// 프린트 스크린 S확정
+	if (GetAsyncKeyState(0x50) & 0x8000)	// p키 S확정
 	{
 		shop.cheat = TRUE;
 		RouletteInit();
@@ -67,6 +67,34 @@ void ShopSelect()
 			if (shop.select == 1) shop.select = 2;
 			second_all = 0.1;
 		}
+	}
+}
+
+void ShopSelect2()
+{
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000 && second_all <= 0)
+	{
+		if (shop.select == 2) shop.select = 1;
+		else if (shop.select == 3) shop.select = 2;
+		second_all = 0.1;
+	}
+
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && second_all <= 0)
+	{
+		if (shop.select == 1) shop.select = 2;
+		else if (shop.select == 2) shop.select = 3;
+		second_all = 0.1;
+	}
+	if (GetAsyncKeyState(VK_UP) & 0x8000 && second_all <= 0)
+	{
+		if (shop.select == 4) shop.select = 3;
+		second_all = 0.1;
+	}
+
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000 && second_all <= 0)
+	{
+		shop.select = 4;
+		second_all = 0.1;
 	}
 }
 

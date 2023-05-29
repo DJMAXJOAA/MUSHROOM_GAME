@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="active_item.c" />
     <ClCompile Include="all_include.c" />
     <ClCompile Include="create_map.c" />
     <ClCompile Include="enemy.c" />
@@ -143,6 +144,7 @@
     <ClCompile Include="Ui.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="active_item.h" />
     <ClInclude Include="create_map.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

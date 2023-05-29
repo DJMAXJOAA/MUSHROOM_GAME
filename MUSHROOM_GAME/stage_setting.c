@@ -18,7 +18,7 @@ int StageInit(int stage_number)
 		portal1.move_to_where = REGION1;
 		portal2.move_to_where = SHOP1;
 		portal3.move_to_where = SHOP2;
-		portal4.move_to_where = END;
+		portal4.move_to_where = SHOP2;
 
 		break;
 
@@ -59,6 +59,7 @@ int StageInit(int stage_number)
 
 	case SHOP2:
 		map_pointer = map3;
+		shop.select = 1;
 
 		break;
 
@@ -98,7 +99,7 @@ void MapObject()
 	if (stage == TOWN)
 	{
 		PrintScreen(58, 22, "무기 랜덤 뽑기");
-		PrintScreen(9, 22, "경품 교환소");
+		PrintScreen(9, 22, "생존 아이템 상점");
 		SetColor(GRAY);
 		FilePrintStr("house2.txt", 54, 23);
 		FilePrintStr("house3.txt", 1, 23);
@@ -151,8 +152,8 @@ void MapObject()
 		PrintScreen(26, 11, "S등급 무기에 도전해 보세요!!");
 		SetColor(WHITE);
 
-		PrintScreen(36, 14, "얻은 무기는 마일리지로 교환 가능합니다.");
-		PrintScreen(45, 15, "마일리지로 경품을 교환하세요!");
+		PrintScreen(36, 14, "얻은 무기는 다시 판매할 수 있습니다.");
+		PrintScreen(38, 15, "S 500원, A 250원, B 100원, C 50원");
 
 		if (shop.select == 1) PrintScreen(11, 21, "▶"); else PrintScreen(11, 21, "▷");
 		PrintScreen(13, 21, "1회 뽑기 :  200원");
@@ -160,6 +161,52 @@ void MapObject()
 		if (shop.select == 2) PrintScreen(46, 21, "▶"); else PrintScreen(46, 21, "▷");
 		PrintScreen(48, 21, "상점에서 나갑니다");
 
+	}
+
+	if (stage == SHOP2)
+	{
+		player.state = DISAPPEAR;
+		SetColor(D_GRAY);
+		FilePrintStr("background_pattern.txt", 1, 1);
+		FilePrintStr("background_pattern.txt", 1, 16);
+		SetColor(WHITE);
+
+		FilePrintStr("shop_border2.txt", 4, 3);
+
+		SetColor(YELLOW);
+		PrintScreen(28, 5, "※※ 생존 아이템 상점 ※※");
+		SetColor(WHITE);
+
+		PrintScreen(16, 8, "탈출을 위해서라면 이 아이템들은 꼭 필요할겁니다!");
+
+
+		PrintScreen(14, 15, "귀환서");
+		if (shop.select == 1) SetColor(YELLOW);
+		FilePrintStr("scroll.txt", 8, 16);
+		SetColor(WHITE);
+		PrintScreen(8, 24, "개수 : ");
+
+		PrintScreen(39, 15, "맥주");
+		if (shop.select == 2) SetColor(YELLOW);
+		FilePrintStr("postion.txt", 38, 17);
+		SetColor(WHITE);
+		PrintScreen(34, 24, "개수 : ");
+
+		PrintScreen(60, 15, "폭탄");
+		if (shop.select == 3) SetColor(YELLOW);
+		FilePrintStr("boom.txt", 58, 17);
+		SetColor(WHITE);
+		PrintScreen(54, 24, "개수 : ");
+
+		if (shop.select == 4) SetColor(YELLOW);
+		PrintScreen(54, 28, "나가기");
+		SetColor(WHITE);
+
+		/*if (shop.select == 1) PrintScreen(11, 21, "▶"); else PrintScreen(11, 21, "▷");
+		PrintScreen(13, 21, "1회 뽑기 :  200원");
+
+		if (shop.select == 2) PrintScreen(46, 21, "▶"); else PrintScreen(46, 21, "▷");
+		PrintScreen(48, 21, "상점에서 나갑니다");*/
 	}
 
 	if (stage == ROULETTE)
