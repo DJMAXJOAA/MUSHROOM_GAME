@@ -26,7 +26,3 @@
 //	double boom_speed;	// ÆøÅº ¼Óµµ
 //	double explosion_time	// Æø¹ß ³²Àº½Ã°£
 //};
-
-Scroll scroll;
-Postion postion;
-Boom boom;

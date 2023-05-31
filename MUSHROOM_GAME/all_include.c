@@ -2,7 +2,7 @@
 #include "Screen.h"
 
 double second_all = 0;	// 클락 시간 초
-int stage  = 4;			// 시작 맵 설정
+int stage  = 0;			// 시작 맵 설정
 char string[100] = { 0 };
 
 double RandomDouble(int range_min, int range_max)
